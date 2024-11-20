@@ -216,3 +216,135 @@ class UI {
         }
     }
 }
+class UI {
+    constructor(storage) {
+        this.storage = storage;
+        this.handleSearch = this.handleSearch.bind(this);
+        this.handlePublish = this.handlePublish.bind(this);
+        this.handleAddEpisode = this.handleAddEpisode.bind(this);
+        this.showAdminPanel = this.showAdminPanel.bind(this);
+        this.initializeUI();
+    }
+
+    initializeUI() {
+        // Esperar a que el DOM esté completamente cargado
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            // Referencias DOM
+            this.searchContainer = document.querySelector('.search-container');
+            this.searchInput = document.getElementById('searchInput');
+            this.publishBtn = document.getElementById('publishBtn');
+            this.adminBtn = document.getElementById('adminBtn');
+            this.modals = document.querySelectorAll('.modal');
+            this.logo = document.querySelector('.logo');
+
+            // Event Listeners
+            if (this.searchInput) {
+                this.searchInput.addEventListener('focus', () => this.searchContainer.classList.add('expanded'));
+                this.searchInput.addEventListener('blur', () => this.searchContainer.classList.remove('expanded'));
+                this.searchInput.addEventListener('input', this.handleSearch);
+            }
+
+            if (this.publishBtn) {
+                this.publishBtn.addEventListener('click', () => this.toggleModal('publishModal'));
+            }
+
+            if (this.adminBtn) {
+                this.adminBtn.addEventListener('click', this.showAdminPanel);
+            }
+
+            if (this.logo) {
+                this.logo.addEventListener('click', () => this.showHome());
+            }
+
+            // Cerrar modales
+            document.querySelectorAll('.close-btn, .close-modal').forEach(btn => {
+                btn.addEventListener('click', () => this.closeAllModals());
+            });
+
+            // Forms
+            const publishForm = document.getElementById('publishForm');
+            const episodeForm = document.getElementById('episodeForm');
+
+            if (publishForm) {
+                publishForm.addEventListener('submit', this.handlePublish);
+            }
+
+            if (episodeForm) {
+                episodeForm.addEventListener('submit', this.handleAddEpisode);
+            }
+
+            // Cargar series iniciales
+            this.loadSeries();
+        });
+    }
+
+    handleSearch(event) {
+        const query = event.target.value.toLowerCase();
+        this.storage.getAllSeries().then(series => {
+            const filtered = series.filter(serie => 
+                serie.title.toLowerCase().includes(query) ||
+                serie.description.toLowerCase().includes(query) ||
+                serie.keywords?.some(keyword => keyword.toLowerCase().includes(query))
+            );
+            this.renderSeriesGrid(filtered);
+        });
+    }
+
+    handlePublish(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const seriesData = {
+            id: Date.now(),
+            title: formData.get('title'),
+            description: formData.get('description'),
+            coverImage: formData.get('coverImage'),
+            keywords: formData.get('keywords')?.split(',').map(k => k.trim()) || [],
+            creatorPassword: formData.get('password'),
+            adminPassword: '1234',
+            episodes: []
+        };
+
+        this.storage.addSeries(seriesData).then(() => {
+            this.closeAllModals();
+            this.loadSeries();
+            event.target.reset();
+        });
+    }
+
+    handleAddEpisode(event) {
+        event.preventDefault();
+        // Implementar lógica para agregar episodio
+    }
+
+    showAdminPanel() {
+        const password = prompt('Ingrese la contraseña de administrador:');
+        if (password === '1234') {
+            this.toggleModal('adminModal');
+            this.storage.getAllSeries().then(series => {
+                const adminContent = document.getElementById('adminContent');
+                if (adminContent) {
+                    adminContent.innerHTML = this.renderAdminContent(series);
+                }
+            });
+        } else {
+            alert('Contraseña incorrecta');
+        }
+    }
+
+    toggleModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
+        }
+    }
+
+    closeAllModals() {
+        this.modals.forEach(modal => {
+            modal.style.display = 'none';
+        });
+    }
+
+    // ... resto de métodos sin cambios
+}
