@@ -1,0 +1,160 @@
+/* General */
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #121212;
+  color: #ffffff;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1e1e1e;
+  padding: 15px 30px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+  font-size: 24px;
+  color: #ffcc00;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+header h1 svg {
+  margin-right: 8px;
+}
+
+header input {
+  background-color: #333333;
+  border: 2px solid #ffcc00;
+  padding: 10px;
+  border-radius: 5px;
+  color: #ffffff;
+}
+
+header button {
+  background-color: #ffcc00;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+header button:hover {
+  background-color: #ffdb4d;
+}
+
+/* Contenedor principal */
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.card {
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.card h3 {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  color: #ffcc00;
+}
+
+.card p {
+  margin: 5px 0;
+  color: #cccccc;
+}
+
+.card .actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card .actions button {
+  background-color: #ffcc00;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.card .actions button:hover {
+  background-color: #ffdb4d;
+}
+
+/* Formulario */
+#publishForm {
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#publishForm h2 {
+  color: #ffcc00;
+  margin-bottom: 20px;
+}
+
+#publishForm label {
+  display: block;
+  margin-bottom: 10px;
+  color: #cccccc;
+}
+
+#publishForm input,
+#publishForm textarea {
+  width: 100%;
+  background-color: #333333;
+  border: 2px solid #ffcc00;
+  border-radius: 5px;
+  padding: 10px;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+#publishForm button {
+  background-color: #ffcc00;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+#publishForm button:hover {
+  background-color: #ffdb4d;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #1e1e1e;
+  color: #cccccc;
+  font-size: 14px;
+}
