@@ -1,157 +1,123 @@
-/* Fuentes y base */
-body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #121212;
-  color: white;
-}
+document.addEventListener("DOMContentLoaded", () => {
+  const seriesList = document.getElementById("series-list");
+  const searchInput = document.getElementById("search");
+  const publishForm = document.getElementById("publishForm");
+  const loginModal = document.getElementById("login-modal");
+  const adminPasswordInput = document.getElementById("admin-password");
+  const loginBtn = document.getElementById("login-btn");
 
-h1, h2 {
-  font-family: 'Roboto', sans-serif;
-}
+  let series = JSON.parse(localStorage.getItem("series")) || [];
 
-.container {
-  padding: 20px;
-}
+  // Mostrar o esconder modal de login
+  const showLoginModal = () => {
+    loginModal.style.display = 'flex';
+  };
 
-h1 {
-  text-align: center;
-  font-size: 2.5rem;
-  margin: 20px 0;
-}
+  const hideLoginModal = () => {
+    loginModal.style.display = 'none';
+  };
 
-.search-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
+  // Renderizar series
+  const renderSeries = () => {
+    seriesList.innerHTML = "";
+    series.forEach((serie, index) => {
+      const seriesCard = document.createElement("div");
+      seriesCard.classList.add("card");
 
-#search {
-  padding: 10px;
-  width: 80%;
-  max-width: 500px;
-  border: 2px solid #fff;
-  border-radius: 5px;
-  background-color: transparent;
-  color: white;
-  font-size: 1rem;
-}
+      // Crear la lista de episodios
+      const episodesHTML = serie.episodes
+        .map(
+          (episode) =>
+            `<li><a href="${episode.url}" target="_blank">${episode.title}</a></li>`
+        )
+        .join("");
 
-main {
-  padding: 20px;
-}
+      seriesCard.innerHTML = `
+        <h3>${serie.title}</h3>
+        <p>${serie.description}</p>
+        <ul>${episodesHTML}</ul>
+        <button class="add-episode" data-index="${index}">Agregar Episodio</button>
+        <button class="delete-series" data-index="${index}">Eliminar Serie</button>
+      `;
 
-#add-series-section {
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 20px;
-  border-radius: 10px;
-  margin-top: 30px;
-}
+      seriesList.appendChild(seriesCard);
+    });
+  };
 
-form {
-  display: flex;
-  flex-direction: column;
-}
+  // Guardar en localStorage
+  const saveSeries = () => {
+    localStorage.setItem("series", JSON.stringify(series));
+  };
 
-form input, form textarea, form button {
-  margin: 10px 0;
-  padding: 10px;
-  background-color: #333;
-  color: white;
-  border: 1px solid #555;
-  border-radius: 5px;
-}
+  // Filtrar series con el buscador
+  searchInput.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase();
+    document.querySelectorAll(".card").forEach((card) => {
+      const title = card.querySelector("h3").innerText.toLowerCase();
+      card.style.display = title.includes(query) ? "block" : "none";
+    });
+  });
 
-form button {
-  background-color: #f39c12;
-  border: none;
-  cursor: pointer;
-}
+  // Agregar nueva serie
+  publishForm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-form button:hover {
-  background-color: #e67e22;
-}
+    const title = e.target.elements["title"].value.trim();
+    const description = e.target.elements["description"].value.trim();
+    const password = e.target.elements["password"].value.trim();
 
-.series-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  margin-top: 20px;
-}
+    if (title && description && password) {
+      series.push({ title, description, password, episodes: [] });
+      saveSeries();
+      renderSeries();
+      e.target.reset();
+      alert("Serie agregada exitosamente.");
+    } else {
+      alert("Por favor, completa todos los campos.");
+    }
+  });
 
-.card {
-  background-color: #1c1c1c;
-  padding: 20px;
-  border-radius: 10px;
-  width: 250px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s;
-}
+  // Delegación de eventos para agregar episodios y eliminar series
+  seriesList.addEventListener("click", (e) => {
+    const index = e.target.dataset.index;
 
-.card:hover {
-  transform: scale(1.05);
-}
+    // Agregar episodio
+    if (e.target.classList.contains("add-episode")) {
+      const episodeTitle = prompt("Título del episodio:");
+      const episodeUrl = prompt("URL del iframe (YouTube, etc.):");
 
-.card h3 {
-  font-size: 1.3rem;
-  color: #f39c12;
-}
+      if (episodeTitle && episodeUrl) {
+        series[index].episodes.push({ title: episodeTitle, url: episodeUrl });
+        saveSeries();
+        renderSeries();
+        alert("Episodio agregado exitosamente.");
+      } else {
+        alert("Por favor, ingresa todos los datos del episodio.");
+      }
+    }
 
-.card p {
-  color: #aaa;
-}
+    // Eliminar serie
+    if (e.target.classList.contains("delete-series")) {
+      const seriePassword = series[index].password;
+      showLoginModal();
 
-.card button {
-  margin-top: 10px;
-  background-color: #f39c12;
-  color: black;
-  border: none;
-  padding: 8px 16px;
-  cursor: pointer;
-  border-radius: 5px;
-}
+      loginBtn.addEventListener("click", () => {
+        const enteredPassword = adminPasswordInput.value.trim();
+        if (enteredPassword === seriePassword || enteredPassword === '1234') {
+          if (confirm("¿Seguro que deseas eliminar esta serie?")) {
+            series.splice(index, 1);
+            saveSeries();
+            renderSeries();
+            hideLoginModal();
+            alert("Serie eliminada exitosamente.");
+          }
+        } else {
+          alert("Contraseña incorrecta.");
+        }
+      });
+    }
+  });
 
-.card button:hover {
-  background-color: #e67e22;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: none;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: #222;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-}
-
-#admin-password {
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-#login-btn {
-  margin-top: 10px;
-  background-color: #f39c12;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-#login-btn:hover {
-  background-color: #e67e22;
-}
+  // Inicializar la aplicación
+  renderSeries();
+});
