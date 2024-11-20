@@ -1,9 +1,12 @@
 /* General */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Roboto', sans-serif;
   background-color: #121212;
-  color: #ffffff;
+  color: #f0f0f0;
+  line-height: 1.6;
 }
 
 header {
@@ -11,12 +14,16 @@ header {
   justify-content: space-between;
   align-items: center;
   background-color: #1e1e1e;
-  padding: 15px 30px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px 40px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 header h1 {
-  font-size: 24px;
+  font-size: 26px;
+  font-weight: 700;
   color: #ffcc00;
   margin: 0;
   display: flex;
@@ -24,77 +31,97 @@ header h1 {
 }
 
 header h1 svg {
-  margin-right: 8px;
+  margin-right: 10px;
 }
 
 header input {
-  background-color: #333333;
+  background-color: #2a2a2a;
   border: 2px solid #ffcc00;
-  padding: 10px;
-  border-radius: 5px;
-  color: #ffffff;
+  padding: 12px;
+  border-radius: 8px;
+  color: #f0f0f0;
+  font-size: 16px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+header input:focus {
+  border-color: #ffdb4d;
+  outline: none;
 }
 
 header button {
   background-color: #ffcc00;
   border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
+  padding: 12px 20px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 700;
   color: #000000;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
 header button:hover {
   background-color: #ffdb4d;
+  transform: scale(1.05);
 }
 
 /* Contenedor principal */
 .container {
   max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
+  margin: 30px auto;
+  padding: 0 20px;
 }
 
 .card {
   background-color: #1e1e1e;
-  border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 20px;
-  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  margin-bottom: 30px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
 }
 
 .card img {
   width: 100%;
-  border-radius: 8px;
-  margin-bottom: 15px;
+  height: auto;
+  display: block;
+}
+
+.card-content {
+  padding: 20px;
 }
 
 .card h3 {
-  margin: 0 0 10px 0;
-  font-size: 20px;
+  font-size: 22px;
   color: #ffcc00;
+  margin: 0 0 10px;
 }
 
 .card p {
-  margin: 5px 0;
-  color: #cccccc;
+  color: #d0d0d0;
+  margin: 0 0 10px;
+  font-size: 14px;
 }
 
 .card .actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .card .actions button {
   background-color: #ffcc00;
   border: none;
   padding: 10px 15px;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
   color: #000000;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
@@ -107,54 +134,70 @@ header button:hover {
 /* Formulario */
 #publishForm {
   background-color: #1e1e1e;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 #publishForm h2 {
+  font-size: 24px;
+  font-weight: 700;
   color: #ffcc00;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 #publishForm label {
   display: block;
   margin-bottom: 10px;
-  color: #cccccc;
+  color: #f0f0f0;
+  font-weight: 500;
 }
 
 #publishForm input,
 #publishForm textarea {
   width: 100%;
-  background-color: #333333;
+  background-color: #2a2a2a;
   border: 2px solid #ffcc00;
-  border-radius: 5px;
-  padding: 10px;
-  color: #ffffff;
+  border-radius: 8px;
+  padding: 12px;
+  color: #f0f0f0;
+  font-size: 16px;
   margin-bottom: 20px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+#publishForm input:focus,
+#publishForm textarea:focus {
+  border-color: #ffdb4d;
+  outline: none;
 }
 
 #publishForm button {
+  width: 100%;
   background-color: #ffcc00;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 15px 20px;
+  border-radius: 8px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 700;
   color: #000000;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
 #publishForm button:hover {
   background-color: #ffdb4d;
+  transform: translateY(-3px);
 }
 
 /* Footer */
 footer {
   text-align: center;
-  padding: 15px;
+  padding: 20px;
   background-color: #1e1e1e;
-  color: #cccccc;
+  color: #d0d0d0;
   font-size: 14px;
+  border-top: 2px solid #ffcc00;
+  margin-top: 30px;
 }
