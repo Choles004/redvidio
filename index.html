@@ -1,64 +1,121 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Series Hub</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RedVidio - Gestión de Series</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"> <!-- Enlace al archivo CSS -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!-- Iconos Material Icons -->
 </head>
 <body>
-    <nav class="navbar">
-        <a href="index.html" class="logo">SeriesHub</a>
-        <div class="search-container">
-            <div class="search-bar">
-                <span class="material-icons search-icon">search</span>
-                <input type="text" placeholder="Buscar series..." id="searchInput">
-                <span class="material-icons clear-search" id="clearSearch">close</span>
-            </div>
-        </div>
-        <button id="addSeriesBtn" class="add-btn" title="Agregar Nueva Serie">
-            <span class="material-icons">add</span>
-        </button>
-    </nav>
+  <!-- Barra de Navegación -->
+  <header class="navbar">
+    <div class="navbar-logo">🎥 RedVidio</div>
+    <input type="text" id="search-bar" placeholder="Buscar series..." class="search-bar">
+    <button id="add-series-btn" class="btn btn-primary">
+      <span class="material-icons">add</span> Publicar
+    </button>
+  </header>
 
-    <main>
-        <h1>Latest Series</h1>
-        <div class="series-grid" id="seriesGrid">
-            <!-- Series cards will be generated here -->
-        </div>
-    </main>
-
-    <!-- Modal para agregar/editar serie -->
-    <div id="seriesModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button material-icons">close</span>
-            <h2>Agregar Nueva Serie</h2>
-            <div class="password-check" id="passwordCheck">
-                <div class="password-input-container">
-                    <input type="password" placeholder="Contraseña" id="passwordInput">
-                    <button id="submitPassword">Verificar</button>
-                </div>
-            </div>
-            <form id="seriesForm" class="hidden">
-                <div class="form-group">
-                    <input type="text" placeholder="Título de la serie" id="seriesTitle" required>
-                </div>
-                <div class="form-group">
-                    <textarea placeholder="Descripción" id="seriesDescription" required></textarea>
-                </div>
-                <div class="form-group">
-                    <input type="url" placeholder="URL de la portada" id="seriesCover" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" placeholder="Palabras clave (separadas por coma)" id="seriesKeywords" required>
-                </div>
-                <button type="submit" class="submit-btn">Publicar Serie</button>
-            </form>
-        </div>
+  <!-- Sección Principal -->
+  <main class="main-content">
+    <div id="series-container" class="series-container">
+      <!-- Aquí se cargarán dinámicamente las tarjetas de las series -->
     </div>
+  </main>
 
-    <script src="script.js"></script>
+  <!-- Modal para agregar series -->
+  <div id="modal-add-series" class="modal">
+    <div class="modal-content">
+      <h2>Agregar Nueva Serie</h2>
+      <form id="series-form">
+        <div class="form-group">
+          <label for="series-title">Título</label>
+          <input type="text" id="series-title" name="title" required>
+        </div>
+        <div class="form-group">
+          <label for="series-description">Descripción</label>
+          <textarea id="series-description" name="description" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="series-image">Portada (URL)</label>
+          <input type="url" id="series-image" name="image" required>
+        </div>
+        <div class="form-group">
+          <label for="series-keywords">Palabras clave</label>
+          <input type="text" id="series-keywords" name="keywords" placeholder="Ejemplo: aventura, drama">
+        </div>
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-secondary" id="close-modal-series">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para agregar episodios -->
+  <div id="modal-add-episode" class="modal">
+    <div class="modal-content">
+      <h2>Agregar Episodio</h2>
+      <form id="episode-form">
+        <div class="form-group">
+          <label for="episode-title">Título del Episodio</label>
+          <input type="text" id="episode-title" name="title" required>
+        </div>
+        <div class="form-group">
+          <label for="episode-number">Número del Episodio</label>
+          <input type="number" id="episode-number" name="number" required>
+        </div>
+        <div class="form-group">
+          <label for="episode-video">Código Embed (iframe)</label>
+          <textarea id="episode-video" name="video" required></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-secondary" id="close-modal-episode">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmación -->
+  <div id="modal-confirm-delete" class="modal">
+    <div class="modal-content">
+      <h2>¿Estás seguro?</h2>
+      <p id="confirmation-message"></p>
+      <div class="modal-actions">
+        <button id="confirm-delete-btn" class="btn btn-danger">Eliminar</button>
+        <button id="cancel-delete-btn" class="btn btn-secondary">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Plantilla de Tarjetas de Series -->
+  <template id="series-template">
+    <div class="series-card">
+      <img src="" alt="Portada de la Serie" class="series-image">
+      <div class="series-info">
+        <h3 class="series-title"></h3>
+        <p class="series-description"></p>
+        <p class="series-episodes">Episodios: <span class="episode-count">0</span></p>
+      </div>
+      <div class="series-actions">
+        <button class="btn btn-secondary edit-series-btn">
+          <span class="material-icons">edit</span>
+        </button>
+        <button class="btn btn-danger delete-series-btn">
+          <span class="material-icons">delete</span>
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Scripts -->
+  <script src="scripts.js"></script>
 </body>
 </html>
