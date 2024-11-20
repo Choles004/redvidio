@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedVidio</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">RedVidio</h1>
+            
+            <div class="header-actions">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Buscar series o cursos...">
+                    <i data-lucide="search"></i>
+                </div>
+                
+                <button id="publishBtn" class="btn btn-primary">
+                    <i data-lucide="plus"></i>
+                    Publicar
+                </button>
+
+                <button id="adminBtn" class="btn btn-icon">
+                    <i data-lucide="settings"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="mainContent" class="main-content">
+        <div id="seriesGrid" class="series-grid"></div>
+    </main>
+
+    <!-- Modal de Publicación -->
+    <div id="publishModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Publicar Nueva Serie</h2>
+                <button class="close-btn"><i data-lucide="x"></i></button>
+            </div>
+            <form id="publishForm">
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>URL de Portada</label>
+                    <input type="url" name="coverImage" required>
+                </div>
+                <div class="form-group">
+                    <label>Palabras Clave</label>
+                    <input type="text" name="keywords" placeholder="Separadas por comas">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña del Creador</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Episodios -->
+    <div id="episodeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Agregar Episodio</h2>
+                <button class="close-btn"><i data-lucide="x"></i></button>
+            </div>
+            <form id="episodeForm">
+                <input type="hidden" name="seriesId">
+                <div class="form-group">
+                    <label>Título del Episodio</label>
+                    <input type="text" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>URL de Miniatura</label>
+                    <input type="url" name="thumbnailUrl" required>
+                </div>
+                <div class="form-group">
+                    <label>Código Embebido</label>
+                    <textarea name="embedCode" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña del Creador</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Agregar Episodio</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Admin -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Panel de Administración</h2>
+                <button class="close-btn"><i data-lucide="x"></i></button>
+            </div>
+            <div id="adminContent"></div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
