@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publicar Series - RedVidio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: rgba(0, 0, 0, 0.9);
+      border-bottom: 2px solid #ffeb3b;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      color: #ffeb3b;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+    }
+    header h1 svg {
+      margin-right: 8px;
+    }
+    header input {
+      padding: 5px 10px;
+      border: 2px solid #ffeb3b;
+      background-color: rgba(0, 0, 139, 0.3);
+      color: #fff;
+    }
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      background-color: #ffeb3b;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn:hover {
+      background-color: #ffd600;
+    }
+    .container {
+      padding: 20px;
+    }
+    .card {
+      background-color: rgba(0, 0, 139, 0.3);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px 0;
+    }
+    .card img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+    .actions {
+      margin-top: 10px;
+    }
+    .actions button {
+      margin-right: 10px;
+    }
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M9 21V3m6 0v18"></path></svg> RedVidio</h1>
+  <div>
+    <input type="text" placeholder="Buscar series..." id="searchBar">
+    <button class="btn" onclick="showPublishForm()">Publicar Serie</button>
+  </div>
+</header>
+
+<div class="container" id="seriesContainer">
+  <!-- Series dinámicas -->
+</div>
+
+<!-- Formulario para publicar una nueva serie -->
+<div class="container" id="publishForm" style="display:none;">
+  <h2>Publicar Nueva Serie</h2>
+  <form id="seriesForm">
+    <label>
+      Título:
+      <input type="text" id="title" required>
+    </label><br>
+    <label>
+      Descripción:
+      <textarea id="description" required></textarea>
+    </label><br>
+    <label>
+      Palabras clave:
+      <input type="text" id="keywords" required>
+    </label><br>
+    <label>
+      URL de Imagen:
+      <input type="text" id="imageURL">
+    </label><br>
+    <label>
+      Contraseña de Administrador:
+      <input type="password" id="adminPassword" required>
+    </label><br><br>
+    <button type="button" class="btn" onclick="publishSeries()">Publicar</button>
+  </form>
+</div>
+
+<!-- Pie de página -->
+<footer>
+  &copy; 2024 RedVidio - Todos los derechos reservados.
+</footer>
+
+<script>
+  const adminPassword = '1234'; // Contraseña para administrador
+  const series = []; // Almacena las series
+
+  // Mostrar el formulario para publicar
+  function showPublishForm() {
+    document.getElementById('publishForm').style.display = 'block';
+    document.getElementById('seriesContainer').style.display = 'none';
+  }
+
+  // Publicar una nueva serie
+  function publishSeries() {
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const keywords = document.getElementById('keywords').value;
+    const imageURL = document.getElementById('imageURL').value || 'https://via.placeholder.com/300x450';
+    const password = document.getElementById('adminPassword').value;
+
+    if (password !== adminPassword) {
+      alert('Contraseña incorrecta. Solo administradores pueden publicar.');
+      return;
+    }
+
+    const newSeries = {
+      id: series.length + 1,
+      title,
+      description,
+      keywords,
+      imageURL,
+      chapters: []
+    };
+
+    series.push(newSeries);
+    renderSeries();
+    document.getElementById('seriesForm').reset();
+    document.getElementById('publishForm').style.display = 'none';
+    document.getElementById('seriesContainer').style.display = 'block';
+  }
+
+  // Renderizar las series
+  function renderSeries() {
+    const container = document.getElementById('seriesContainer');
+    container.innerHTML = '';
+    series.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h3>${s.title}</h3>
+        <img src="${s.imageURL}" alt="${s.title}">
+        <p>${s.description}</p>
+        <p><strong>Palabras clave:</strong> ${s.keywords}</p>
+        <div class="actions">
+          <button class="btn" onclick="showChapters(${s.id})">Ver Capítulos</button>
+          <button class="btn" onclick="deleteSeries(${s.id})">Eliminar</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // Eliminar una serie
+  function deleteSeries(id) {
+    const password = prompt('Ingrese la contraseña de administrador:');
+    if (password !== adminPassword) {
+      alert('Contraseña incorrecta.');
+      return;
+    }
+    const index = series.findIndex(s => s.id === id);
+    if (index > -1) {
+      series.splice(index, 1);
+      renderSeries();
+    }
+  }
+
+  // Mostrar capítulos (implementar en próximos pasos)
+  function showChapters(seriesId) {
+    alert(`Mostrando capítulos para la serie ID: ${seriesId}`);
+  }
+</script>
+
+</body>
+</html>
