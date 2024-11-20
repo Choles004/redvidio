@@ -1,223 +1,210 @@
 class UI {
-  constructor(storage) {
-    this.storage = storage;
-    this.initializeUI();
-  }
+    constructor() {
+        this.storage = new Storage();
+        this.initializeUI();
+    }
 
-  initializeUI() {
-    // Inicializar iconos de Lucide
-    lucide.createIcons();
+    initializeUI() {
+        this.mainContent = document.getElementById('mainContent');
+        this.searchInput = document.getElementById('searchInput');
+        this.publishBtn = document.getElementById('publishBtn');
+        this.adminBtn = document.getElementById('adminBtn');
+        this.logo = document.querySelector('.logo');
 
-    // Referencias DOM
-    this.seriesGrid = document.getElementById('seriesGrid');
-    this.searchInput = document.getElementById('searchInput');
-    this.publishBtn = document.getElementById('publishBtn');
-    this.adminBtn = document.getElementById('adminBtn');
-    this.publishModal = document.getElementById('publishModal');
-    this.episodeModal = document.getElementById('episodeModal');
-    this.adminModal = document.getElementById('adminModal');
+        this.searchInput.addEventListener('input', () => this.handleSearch());
+        this.searchInput.addEventListener('focus', () => this.searchInput.classList.add('expanded'));
+        this.searchInput.addEventListener('blur', () => this.searchInput.classList.remove('expanded'));
+        
+        this.publishBtn.addEventListener('click', () => this.showModal('publishModal'));
+        this.adminBtn.addEventListener('click', () => this.showAdminPanel());
+        this.logo.addEventListener('click', () => this.showHome());
 
-    // Event Listeners
-    this.searchInput.addEventListener('input', this.handleSearch.bind(this));
-    this.publishBtn.addEventListener('click', () => this.toggleModal(this.publishModal));
-    this.adminBtn.addEventListener('click', () => this.showAdminPanel());
+        document.getElementById('publishForm').addEventListener('submit', (e) => this.handlePublish(e));
+        document.getElementById('episodeForm').addEventListener('submit', (e) => this.handleAddEpisode(e));
 
-    document.querySelectorAll('.close-btn, .close-modal').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.modal').forEach(modal => {
-          modal.classList.remove('active');
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => this.hideModals());
         });
-      });
-    });
 
-    document.getElementById('publishForm').addEventListener('submit', this.handlePublish.bind(this));
-    document.getElementById('episodeForm').addEventListener('submit', this.handleAddEpisode.bind(this));
-
-    // Cargar series iniciales
-    this.loadSeries();
-  }
-
-  async loadSeries() {
-    const series = await this.storage.getAllSeries();
-    this.renderSeriesGrid(series);
-  }
-
-  toggleModal(modal) {
-    modal.classList.toggle('active');
-  }
-
-  async handleSearch(e) {
-    const query = e.target.value;
-    const filteredSeries = await this.storage.searchSeries(query);
-    this.renderSeriesGrid(filteredSeries);
-  }
-
-  async handlePublish(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const newSeries = {
-      id: Date.now(),
-      title: formData.get('title'),
-      description: formData.get('description'),
-      coverImage: formData.get('coverImage'),
-      keywords: formData.get('keywords').split(',').map(k => k.trim()),
-      views: 0,
-      likes: 0,
-      comments: 0,
-      episodes: [],
-      creatorPassword: formData.get('password')
-    };
-
-    await this.storage.addSeries(newSeries);
-    await this.loadSeries();
-    this.toggleModal(this.publishModal);
-    e.target.reset();
-  }
-
-  async handleAddEpisode(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const seriesId = parseInt(formData.get('seriesId'));
-    const series = (await this.storage.getAllSeries()).find(s => s.id === seriesId);
-
-    if (!series) return;
-
-    if (formData.get('password') !== series.creatorPassword) {
-      alert('Contraseña incorrecta');
-      return;
+        this.loadSeries();
     }
 
-    const newEpisode = {
-      id: Date.now(),
-      title: formData.get('title'),
-      description: formData.get('description'),
-      thumbnailUrl: formData.get('thumbnailUrl'),
-      embedCode: formData.get('embedCode'),
-      shareUrl: `${window.location.origin}/series/${seriesId}/episode/${series.episodes.length + 1}`
-    };
+    loadSeries() {
+        const series = this.storage.getAllSeries();
+        this.renderSeriesGrid(series);
+    }
 
-    series.episodes.push(newEpisode);
-    await this.storage.updateSeries(series);
-    this.showSeries(series);
-    this.toggleModal(this.episodeModal);
-    e.target.reset();
-  }
-
-  renderSeriesGrid(series) {
-    this.seriesGrid.innerHTML = series.map(serie => `
-      <div class="series-card" onclick="ui.showSeries(${JSON.stringify(serie).replace(/"/g, '&quot;')})">
-        <div class="series-image">
-          <img src="${serie.coverImage}" alt="${serie.title}">
-          <div class="series-overlay">
-            <h3>${serie.title}</h3>
-            <p>${serie.description}</p>
-          </div>
-        </div>
-        <div class="series-info">
-          <div class="series-stats">
-            <span class="stat">
-              <i data-lucide="eye"></i>
-              ${serie.views}
-            </span>
-            <div class="stat-group">
-              <span class="stat">
-                <i data-lucide="heart"></i>
-                ${serie.likes}
-              </span>
-              <span class="stat">
-                <i data-lucide="message-circle"></i>
-                ${serie.comments}
-              </span>
+    renderSeriesGrid(series) {
+        this.mainContent.innerHTML = `
+            <div class="series-grid">
+                ${series.map(serie => this.renderSeriesCard(serie)).join('')}
             </div>
-          </div>
-        </div>
-      </div>
-    `).join('');
-    
-    lucide.createIcons();
-  }
+        `;
+    }
 
-  showSeries(series) {
-    this.seriesGrid.innerHTML = `
-      <div class="episode-viewer">
-        <div class="episode-header">
-          <button class="btn btn-secondary" onclick="ui.loadSeries()">
-            <i data-lucide="arrow-left"></i>
-            Volver
-          </button>
-          <button class="btn btn-primary" onclick="ui.showAddEpisodeModal(${series.id})">
-            <i data-lucide="plus"></i>
-            Agregar Episodio
-          </button>
-        </div>
+    renderSeriesCard(serie) {
+        return `
+            <div class="series-card" onclick="ui.showSeries(${serie.id})">
+                <div class="series-image">
+                    <img src="${serie.coverImage}" alt="${serie.title}" onerror="this.src='placeholder.png'">
+                    <div class="series-overlay">
+                        <h3>${serie.title}</h3>
+                        <p>${serie.description}</p>
+                    </div>
+                </div>
+                <div class="series-info">
+                    <div class="stats-container">
+                        <span class="stat"><i data-lucide="eye"></i>${serie.views || 0}</span>
+                        <span class="stat"><i data-lucide="heart"></i>${serie.likes || 0}</span>
+                        <span class="stat"><i data-lucide="message-circle"></i>${serie.comments?.length || 0}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    showSeries(seriesId) {
+        const series = this.storage.getAllSeries().find(s => s.id === seriesId);
+        if (!series) return;
+
+        this.mainContent.innerHTML = `
+            <div class="series-viewer">
+                <div class="series-header">
+                    <button class="btn" onclick="ui.showHome()">
+                        <i data-lucide="arrow-left"></i> Volver
+                    </button>
+                    <h2>${series.title}</h2>
+                </div>
+                ${series.episodes.map(episode => this.renderEpisode(episode, series)).join('')}
+                <button class="btn btn-primary" onclick="ui.showModal('episodeModal', ${seriesId})">
+                    <i data-lucide="plus"></i> Agregar Episodio
+                </button>
+            </div>
+        `;
+        lucide.createIcons();
+    }
+
+    renderEpisode(episode, series) {
+        return `
+            <div class="episode-container">
+                <div class="video-container">
+                    ${episode.embedCode}
+                </div>
+                <h3>${episode.title}</h3>
+                <p>${episode.description}</p>
+                <div class="stats-container">
+                    <button onclick="ui.updateStats(${series.id}, 'views')" class="stat-button">
+                        <i data-lucide="eye"></i> ${series.views || 0}
+                    </button>
+                    <button onclick="ui.updateStats(${series.id}, 'likes')" class="stat-button">
+                        <i data-lucide="heart"></i> ${series.likes || 0}
+                    </button>
+                    <button onclick="ui.updateStats(${series.id}, 'dislikes')" class="stat-button">
+                        <i data-lucide="thumbs-down"></i> ${series.dislikes || 0}
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    handleSearch() {
+        const query = this.searchInput.value.toLowerCase();
+        const series = this.storage.getAllSeries();
+        const filtered = series.filter(serie => 
+            serie.title.toLowerCase().includes(query) ||
+            serie.description.toLowerCase().includes(query)
+        );
+        this.renderSeriesGrid(filtered);
+    }
+
+    showModal(modalId, data = null) {
+        const modal = document.getElementById(modalId);
+        if (data) {
+            modal.dataset.seriesId = data;
+        }
+        modal.classList.add('active');
+    }
+
+    hideModals() {
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.classList.remove('active');
+        });
+    }
+
+    handlePublish(event) {
+        event.preventDefault();
+        const form = event.target;
+        const series = {
+            id: Date.now(),
+            title: form.title.value,
+            description: form.description.value,
+            coverImage: form.coverImage.value,
+            episodes: []
+        };
         
-        <h2>${series.title}</h2>
-        <p>${series.description}</p>
+        this.storage.addSeries(series);
+        this.hideModals();
+        this.loadSeries();
+        form.reset();
+    }
+
+    handleAddEpisode(event) {
+        event.preventDefault();
+        const form = event.target;
+        const seriesId = parseInt(form.closest('.modal').dataset.seriesId);
+        const series = this.storage.getAllSeries().find(s => s.id === seriesId);
         
-        ${series.episodes.map((episode, index) => `
-          <div class="episode-container">
-            <div class="episode-embed">
-              ${episode.embedCode}
-            </div>
-            <div class="episode-info">
-              <h3>${episode.title}</h3>
-              <p>${episode.description}</p>
-              <div class="share-section">
-                <h4>Compartir</h4>
-                <input type="text" readonly value="${episode.shareUrl}" onclick="this.select()">
-                <input type="text" readonly value="${episode.embedCode}" onclick="this.select()">
-              </div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-    
-    lucide.createIcons();
-  }
-
-  showAddEpisodeModal(seriesId) {
-    const episodeForm = document.getElementById('episodeForm');
-    episodeForm.querySelector('[name="seriesId"]').value = seriesId;
-    this.toggleModal(this.episodeModal);
-  }
-
-  async showAdminPanel() {
-    const password = prompt('Ingrese la contraseña de administrador:');
-    if (password !== '1234') {
-      alert('Contraseña incorrecta');
-      return;
+        if (series) {
+            series.episodes.push({
+                id: Date.now(),
+                title: form.title.value,
+                description: form.description.value,
+                embedCode: form.embedCode.value
+            });
+            this.storage.saveSeries(this.storage.getAllSeries());
+            this.hideModals();
+            this.showSeries(seriesId);
+            form.reset();
+        }
     }
 
-    const series = await this.storage.getAllSeries();
-    const adminContent = document.getElementById('adminContent');
-    
-    adminContent.innerHTML = `
-      <div class="admin-series-list">
-        ${series.map(series => `
-          <div class="admin-series-item">
-            <div>
-              <h3>${series.title}</h3>
-              <p>${series.episodes.length} episodios</p>
-            </div>
-            <div>
-              <button onclick="ui.deleteSeries(${series.id})" class="btn btn-secondary">
-                <i data-lucide="trash-2"></i>
-              </button>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-    
-    lucide.createIcons();
-    this.toggleModal(this.adminModal);
-  }
-
-  async deleteSeries(seriesId) {
-    if (confirm('¿Está seguro de eliminar esta serie?')) {
-      await this.storage.deleteSeries(seriesId);
-      this.showAdminPanel();
+    updateStats(seriesId, type) {
+        const newValue = this.storage.updateStats(seriesId, type);
+        this.showSeries(seriesId);
+        return newValue;
     }
-  }
+
+    showHome() {
+        this.loadSeries();
+    }
+
+    showAdminPanel() {
+        const password = prompt('Contraseña de administrador:');
+        if (password === '1234') {
+            const series = this.storage.getAllSeries();
+            this.mainContent.innerHTML = `
+                <div class="admin-panel">
+                    <h2>Panel de Administración</h2>
+                    <div class="admin-series">
+                        ${series.map(serie => `
+                            <div class="admin-series-item">
+                                <h3>${serie.title}</h3>
+                                <button onclick="ui.deleteSeries(${serie.id})" class="btn btn-danger">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+    }
+
+    deleteSeries(seriesId) {
+        if (confirm('¿Estás seguro de eliminar esta serie?')) {
+            this.storage.deleteSeries(seriesId);
+            this.showAdminPanel();
+        }
+    }
 }
