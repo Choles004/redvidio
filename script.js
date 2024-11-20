@@ -1,99 +1,157 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const seriesList = document.getElementById("series-list");
-  const searchInput = document.getElementById("search");
-  const addSeriesForm = document.getElementById("publishForm");
+/* Fuentes y base */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  color: white;
+}
 
-  let series = JSON.parse(localStorage.getItem("series")) || [];
+h1, h2 {
+  font-family: 'Roboto', sans-serif;
+}
 
-  // Renderizar todas las series
-  const renderSeries = () => {
-    seriesList.innerHTML = "";
-    series.forEach((serie, index) => {
-      const seriesCard = document.createElement("div");
-      seriesCard.classList.add("card");
+.container {
+  padding: 20px;
+}
 
-      // Crear la lista de episodios
-      const episodesHTML = serie.episodes
-        .map(
-          (episode) =>
-            `<li>
-              <a href="${episode.url}" target="_blank">${episode.title}</a>
-            </li>`
-        )
-        .join("");
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin: 20px 0;
+}
 
-      seriesCard.innerHTML = `
-        <h3>${serie.title}</h3>
-        <p>${serie.description}</p>
-        <ul>${episodesHTML}</ul>
-        <button class="add-episode" data-index="${index}">Agregar Episodio</button>
-        <button class="delete-series" data-index="${index}">Eliminar Serie</button>
-      `;
-      seriesList.appendChild(seriesCard);
-    });
-  };
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
 
-  // Guardar series en localStorage
-  const saveSeries = () => {
-    localStorage.setItem("series", JSON.stringify(series));
-  };
+#search {
+  padding: 10px;
+  width: 80%;
+  max-width: 500px;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  background-color: transparent;
+  color: white;
+  font-size: 1rem;
+}
 
-  // Filtrar series por búsqueda
-  searchInput.addEventListener("input", (e) => {
-    const query = e.target.value.toLowerCase();
-    document.querySelectorAll(".card").forEach((card) => {
-      const title = card.querySelector("h3").innerText.toLowerCase();
-      card.style.display = title.includes(query) ? "block" : "none";
-    });
-  });
+main {
+  padding: 20px;
+}
 
-  // Agregar nueva serie
-  addSeriesForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const title = e.target.elements["title"].value.trim();
-    const description = e.target.elements["description"].value.trim();
+#add-series-section {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 30px;
+}
 
-    if (title && description) {
-      series.push({ title, description, episodes: [] });
-      saveSeries();
-      renderSeries();
-      e.target.reset();
-      alert("Serie agregada exitosamente.");
-    } else {
-      alert("Por favor, completa todos los campos.");
-    }
-  });
+form {
+  display: flex;
+  flex-direction: column;
+}
 
-  // Delegación de eventos para agregar episodios y eliminar series
-  seriesList.addEventListener("click", (e) => {
-    const index = e.target.dataset.index;
+form input, form textarea, form button {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 5px;
+}
 
-    // Agregar episodio
-    if (e.target.classList.contains("add-episode")) {
-      const episodeTitle = prompt("Título del episodio:");
-      const episodeUrl = prompt("URL del iframe (YouTube, etc.):");
+form button {
+  background-color: #f39c12;
+  border: none;
+  cursor: pointer;
+}
 
-      if (episodeTitle && episodeUrl) {
-        series[index].episodes.push({ title: episodeTitle, url: episodeUrl });
-        saveSeries();
-        renderSeries();
-        alert("Episodio agregado exitosamente.");
-      } else {
-        alert("Por favor, ingresa todos los datos del episodio.");
-      }
-    }
+form button:hover {
+  background-color: #e67e22;
+}
 
-    // Eliminar serie
-    if (e.target.classList.contains("delete-series")) {
-      if (confirm("¿Seguro que deseas eliminar esta serie?")) {
-        series.splice(index, 1);
-        saveSeries();
-        renderSeries();
-        alert("Serie eliminada exitosamente.");
-      }
-    }
-  });
+.series-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
 
-  // Inicializar la aplicación
-  renderSeries();
-});
+.card {
+  background-color: #1c1c1c;
+  padding: 20px;
+  border-radius: 10px;
+  width: 250px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card h3 {
+  font-size: 1.3rem;
+  color: #f39c12;
+}
+
+.card p {
+  color: #aaa;
+}
+
+.card button {
+  margin-top: 10px;
+  background-color: #f39c12;
+  color: black;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.card button:hover {
+  background-color: #e67e22;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #222;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+#admin-password {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#login-btn {
+  margin-top: 10px;
+  background-color: #f39c12;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#login-btn:hover {
+  background-color: #e67e22;
+}
