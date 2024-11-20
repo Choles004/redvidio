@@ -1,63 +1,62 @@
 class Storage {
-  constructor() {
-    this.storageKey = 'redvidio-data';
-    // Initialize storage if empty
-    if (!localStorage.getItem(this.storageKey)) {
-      localStorage.setItem(this.storageKey, JSON.stringify({ series: [] }));
+    constructor() {
+        this.storageKey = 'redvidio-series';
     }
-  }
 
-  async getData() {
-    try {
-      const data = localStorage.getItem(this.storageKey);
-      return JSON.parse(data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      return { series: [] };
+    getAllSeries() {
+        const data = localStorage.getItem(this.storageKey);
+        return data ? JSON.parse(data) : [];
     }
-  }
 
-  async saveData(data) {
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(data, null, 2));
-    } catch (error) {
-      console.error('Error saving data:', error);
+    saveSeries(series) {
+        localStorage.setItem(this.storageKey, JSON.stringify(series));
     }
-  }
 
-  async getAllSeries() {
-    const data = await this.getData();
-    return data.series;
-  }
-
-  async addSeries(series) {
-    const data = await this.getData();
-    data.series.push(series);
-    await this.saveData(data);
-  }
-
-  async updateSeries(updatedSeries) {
-    const data = await this.getData();
-    const index = data.series.findIndex(s => s.id === updatedSeries.id);
-    if (index !== -1) {
-      data.series[index] = updatedSeries;
-      await this.saveData(data);
+    addSeries(series) {
+        const allSeries = this.getAllSeries();
+        const newSeries = {
+            ...series,
+            views: 0,
+            likes: 0,
+            dislikes: 0,
+            comments: []
+        };
+        allSeries.push(newSeries);
+        this.saveSeries(allSeries);
+        return newSeries;
     }
-  }
 
-  async deleteSeries(id) {
-    const data = await this.getData();
-    data.series = data.series.filter(s => s.id !== id);
-    await this.saveData(data);
-  }
+    updateStats(seriesId, type) {
+        const allSeries = this.getAllSeries();
+        const series = allSeries.find(s => s.id === seriesId);
+        if (series) {
+            series[type] = (parseInt(series[type]) || 0) + 1;
+            this.saveSeries(allSeries);
+            return series[type];
+        }
+        return 0;
+    }
 
-  async searchSeries(query) {
-    const data = await this.getData();
-    const lowercaseQuery = query.toLowerCase();
-    return data.series.filter(series => 
-      series.title.toLowerCase().includes(lowercaseQuery) ||
-      series.description.toLowerCase().includes(lowercaseQuery) ||
-      series.keywords.some(keyword => keyword.toLowerCase().includes(lowercaseQuery))
-    );
-  }
+    addComment(seriesId, comment) {
+        const allSeries = this.getAllSeries();
+        const series = allSeries.find(s => s.id === seriesId);
+        if (series) {
+            if (!series.comments) series.comments = [];
+            const newComment = {
+                id: Date.now(),
+                text: comment,
+                timestamp: new Date().toISOString()
+            };
+            series.comments.push(newComment);
+            this.saveSeries(allSeries);
+            return newComment;
+        }
+        return null;
+    }
+
+    deleteSeries(seriesId) {
+        const allSeries = this.getAllSeries();
+        const filteredSeries = allSeries.filter(s => s.id !== seriesId);
+        this.saveSeries(filteredSeries);
+    }
 }
