@@ -42,11 +42,15 @@ body {
 
 button {
     background-color: #333;
-    color: #fff;
     border: none;
     border-radius: 10px;
-    padding: 10px;
+    padding: 20px;
     cursor: pointer;
+}
+
+button img {
+    width: 30px;
+    height: 30px;
 }
 
 button:hover {
