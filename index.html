@@ -1,47 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestor de Series</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
     <div class="container">
-      <h1>Gestor de Series</h1>
-      <div class="search-container">
-        <input type="text" id="search" placeholder="Buscar Serie...">
-      </div>
+        <div class="sidebar">
+            <div class="score-level">
+                <h2>Puntaje y nivel</h2>
+                <p>Puntaje: <span id="score">0</span></p>
+                <p>Nivel: <span id="level">1</span></p>
+            </div>
+            <div class="next-piece">
+                <h2>La siguiente figura</h2>
+                <div id="next-piece-preview"></div>
+            </div>
+        </div>
+        <div class="game-area">
+            <canvas id="gameCanvas"></canvas>
+            <div id="game-message"></div>
+        </div>
     </div>
-  </header>
-
-  <main>
-    <section id="series-container" class="series-container">
-      <div id="series-list"></div>
-    </section>
-
-    <section id="add-series-section" class="add-series-section">
-      <h2>Publicar Nueva Serie</h2>
-      <form id="publishForm">
-        <input type="text" id="title" name="title" placeholder="Título de la serie" required>
-        <textarea id="description" name="description" placeholder="Descripción" required></textarea>
-        <input type="password" id="password" name="password" placeholder="Crea tu contraseña para editar/eliminar" required>
-        <button type="submit">Agregar Serie</button>
-      </form>
-    </section>
-  </main>
-
-  <div id="login-modal" class="modal">
-    <div class="modal-content">
-      <h3>Ingrese su clave</h3>
-      <input type="password" id="admin-password" placeholder="Contraseña">
-      <button id="login-btn">Acceder</button>
+    <div class="controls">
+        <button id="left-btn">←</button>
+        <button id="rotate-btn">↻</button>
+        <button id="pause-btn">⏸</button>
+        <button id="right-btn">→</button>
     </div>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
