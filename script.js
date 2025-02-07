@@ -1,123 +1,161 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const seriesList = document.getElementById("series-list");
-  const searchInput = document.getElementById("search");
-  const publishForm = document.getElementById("publishForm");
-  const loginModal = document.getElementById("login-modal");
-  const adminPasswordInput = document.getElementById("admin-password");
-  const loginBtn = document.getElementById("login-btn");
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreDisplay = document.getElementById('score');
+const levelDisplay = document.getElementById('level');
+const gameMessage = document.getElementById('game-message');
 
-  let series = JSON.parse(localStorage.getItem("series")) || [];
+const gridWidth = 10;
+const gridHeight = 20;
+const cellSize = 30;
 
-  // Mostrar o esconder modal de login
-  const showLoginModal = () => {
-    loginModal.style.display = 'flex';
-  };
+canvas.width = gridWidth * cellSize;
+canvas.height = gridHeight * cellSize;
 
-  const hideLoginModal = () => {
-    loginModal.style.display = 'none';
-  };
+let grid = Array.from({ length: gridHeight }, () => Array(gridWidth).fill(0));
+let currentPiece = getNewPiece();
+let nextPiece = getNewPiece();
+let score = 0;
+let level = 1;
+let gameOver = false;
+let pause = false;
 
-  // Renderizar series
-  const renderSeries = () => {
-    seriesList.innerHTML = "";
-    series.forEach((serie, index) => {
-      const seriesCard = document.createElement("div");
-      seriesCard.classList.add("card");
+function getNewPiece() {
+    const shapes = [
+        [[1, 1, 1, 1]],
+        [[1, 1], [1, 1]],
+        [[1, 1, 1], [0, 1, 0]],
+        [[1, 1, 1], [1, 0, 0]],
+        [[1, 1, 1], [0, 0, 1]],
+        [[1, 1, 0], [0, 1, 1]],
+        [[0, 1, 1], [1, 1, 0]]
+    ];
+    const colors = [
+        '#0FF', '#FF0', '#800', '#F60', '#00F', '#0F0', '#F00'
+    ];
+    const index = Math.floor(Math.random() * shapes.length);
+    return { shape: shapes[index], color: colors[index], x: 3, y: 0 };
+}
 
-      // Crear la lista de episodios
-      const episodesHTML = serie.episodes
-        .map(
-          (episode) =>
-            `<li><a href="${episode.url}" target="_blank">${episode.title}</a></li>`
-        )
-        .join("");
-
-      seriesCard.innerHTML = `
-        <h3>${serie.title}</h3>
-        <p>${serie.description}</p>
-        <ul>${episodesHTML}</ul>
-        <button class="add-episode" data-index="${index}">Agregar Episodio</button>
-        <button class="delete-series" data-index="${index}">Eliminar Serie</button>
-      `;
-
-      seriesList.appendChild(seriesCard);
-    });
-  };
-
-  // Guardar en localStorage
-  const saveSeries = () => {
-    localStorage.setItem("series", JSON.stringify(series));
-  };
-
-  // Filtrar series con el buscador
-  searchInput.addEventListener("input", (e) => {
-    const query = e.target.value.toLowerCase();
-    document.querySelectorAll(".card").forEach((card) => {
-      const title = card.querySelector("h3").innerText.toLowerCase();
-      card.style.display = title.includes(query) ? "block" : "none";
-    });
-  });
-
-  // Agregar nueva serie
-  publishForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const title = e.target.elements["title"].value.trim();
-    const description = e.target.elements["description"].value.trim();
-    const password = e.target.elements["password"].value.trim();
-
-    if (title && description && password) {
-      series.push({ title, description, password, episodes: [] });
-      saveSeries();
-      renderSeries();
-      e.target.reset();
-      alert("Serie agregada exitosamente.");
-    } else {
-      alert("Por favor, completa todos los campos.");
-    }
-  });
-
-  // Delegación de eventos para agregar episodios y eliminar series
-  seriesList.addEventListener("click", (e) => {
-    const index = e.target.dataset.index;
-
-    // Agregar episodio
-    if (e.target.classList.contains("add-episode")) {
-      const episodeTitle = prompt("Título del episodio:");
-      const episodeUrl = prompt("URL del iframe (YouTube, etc.):");
-
-      if (episodeTitle && episodeUrl) {
-        series[index].episodes.push({ title: episodeTitle, url: episodeUrl });
-        saveSeries();
-        renderSeries();
-        alert("Episodio agregado exitosamente.");
-      } else {
-        alert("Por favor, ingresa todos los datos del episodio.");
-      }
-    }
-
-    // Eliminar serie
-    if (e.target.classList.contains("delete-series")) {
-      const seriePassword = series[index].password;
-      showLoginModal();
-
-      loginBtn.addEventListener("click", () => {
-        const enteredPassword = adminPasswordInput.value.trim();
-        if (enteredPassword === seriePassword || enteredPassword === '1234') {
-          if (confirm("¿Seguro que deseas eliminar esta serie?")) {
-            series.splice(index, 1);
-            saveSeries();
-            renderSeries();
-            hideLoginModal();
-            alert("Serie eliminada exitosamente.");
-          }
-        } else {
-          alert("Contraseña incorrecta.");
+function drawGrid() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let y = 0; y < gridHeight; y++) {
+        for (let x = 0; x < gridWidth; x++) {
+            if (grid[y][x]) {
+                ctx.fillStyle = grid[y][x];
+                ctx.fillRect(x * cellSize, y * cellSize, cellSize - 1, cellSize - 1);
+            }
         }
-      });
     }
-  });
+    drawPiece(currentPiece);
+}
 
-  // Inicializar la aplicación
-  renderSeries();
+function drawPiece(piece) {
+    ctx.fillStyle = piece.color;
+    for (let y = 0; y < piece.shape.length; y++) {
+        for (let x = 0; x < piece.shape[y].length; x++) {
+            if (piece.shape[y][x]) {
+                ctx.fillRect((piece.x + x) * cellSize, (piece.y + y) * cellSize, cellSize - 1, cellSize - 1);
+            }
+        }
+    }
+}
+
+function movePieceDown() {
+    if (!isCollision(currentPiece, 1, 0)) {
+        currentPiece.y++;
+    } else {
+        mergePiece();
+        clearLines();
+        currentPiece = nextPiece;
+        nextPiece = getNewPiece();
+        if (isCollision(currentPiece, 0, 0)) {
+            gameOver = true;
+            gameMessage.innerText = 'Game Over!';
+        }
+    }
+}
+
+function isCollision(piece, offsetY, offsetX) {
+    for (let y = 0; y < piece.shape.length; y++) {
+        for (let x = 0; x < piece.shape[y].length; x++) {
+            if (piece.shape[y][x]) {
+                const newX = piece.x + x + offsetX;
+                const newY = piece.y + y + offsetY;
+                if (newX < 0 || newX >= gridWidth || newY >= gridHeight || (newY >= 0 && grid[newY][newX])) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+function mergePiece() {
+    for (let y = 0; y < currentPiece.shape.length; y++) {
+        for (let x = 0; x < currentPiece.shape[y].length; x++) {
+            if (currentPiece.shape[y][x]) {
+                grid[currentPiece.y + y][currentPiece.x + x] = currentPiece.color;
+            }
+        }
+    }
+}
+
+function clearLines() {
+    for (let y = gridHeight - 1; y >= 0; y--) {
+        if (grid[y].every(cell => cell !== 0)) {
+            grid.splice(y, 1);
+            grid.unshift(Array(gridWidth).fill(0));
+            score += 100 * level;
+            if (score >= 700 * level) {
+                level++;
+            }
+            scoreDisplay.innerText = score;
+            levelDisplay.innerText = level;
+        }
+    }
+}
+
+function rotatePiece() {
+    const newShape = currentPiece.shape[0].map((_, index) =>
+        currentPiece.shape.map(row => row[index]).reverse()
+    );
+    const originalShape = currentPiece.shape;
+    currentPiece.shape = newShape;
+    if (isCollision(currentPiece, 0, 0)) {
+        currentPiece.shape = originalShape;
+    }
+}
+
+document.getElementById('left-btn').addEventListener('click', () => {
+    if (!isCollision(currentPiece, 0, -1)) {
+        currentPiece.x--;
+    }
 });
+
+document.getElementById('right-btn').addEventListener('click', () => {
+    if (!isCollision(currentPiece, 0, 1)) {
+        currentPiece.x++;
+    }
+});
+
+document.getElementById('rotate-btn').addEventListener('click', rotatePiece);
+
+document.getElementById('pause-btn').addEventListener('click', () => {
+    pause = !pause;
+    if (pause) {
+        gameMessage.innerText = 'Pausa';
+    } else {
+        gameMessage.innerText = '';
+        gameLoop();
+    }
+});
+
+function gameLoop() {
+    if (!gameOver && !pause) {
+        movePieceDown();
+        drawGrid();
+        setTimeout(gameLoop, 1000);
+    }
+}
+
+gameLoop();
