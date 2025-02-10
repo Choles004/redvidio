@@ -1,67 +1,227 @@
-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+:root {
+    --primary-color: #4a90e2;
+    --primary-dark: #357abd;
+    --success-color: #2ecc71;
+    --success-dark: #27ae60;
+    --background-color: #f8f9fa;
+    --text-color: #2c3e50;
+    --border-color: #e1e4e8;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+* {
     margin: 0;
-    background-color: #000;
-    color: #fff;
-    font-family: Arial, sans-serif;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.container {
-    display: flex;
-    width: 100%;
-    max-width: 600px;
-}
-
-.sidebar {
-    width: 30%;
-    padding: 10px;
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 }
 
-.game-area {
-    width: 70%;
-    position: relative;
+header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    padding: 2rem 1rem;
+    text-align: center;
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
-#gameCanvas {
-    background-color: #111;
-    border: 2px solid #fff;
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
 }
 
-.controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+main {
+    flex: 1;
+    max-width: 800px;
+    width: 90%;
+    margin: 2rem auto;
+    padding-bottom: 4rem; /* Espacio para el footer */
+}
+
+section {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    transition: transform 0.2s ease;
+}
+
+section:hover {
+    transform: translateY(-2px);
+}
+
+h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.2rem;
+    font-size: 1.5rem;
+}
+
+/* Estilo personalizado para input file */
+#fileInput {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+#fileInput:hover {
+    border-color: var(--primary-color);
 }
 
 button {
-    background-color: #333;
+    background-color: var(--success-color);
+    color: white;
+    padding: 0.8rem 1.5rem;
     border: none;
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: 6px;
     cursor: pointer;
-}
-
-button img {
-    width: 30px;
-    height: 30px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 300px;
+    display: block;
+    margin: 1rem auto;
 }
 
 button:hover {
-    background-color: #555;
+    background-color: var(--success-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
-#game-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
+button:active {
+    transform: translateY(0);
+}
+
+/* Barra de progreso mejorada */
+#progressBar {
+    background-color: #f0f2f5;
+    border-radius: 8px;
+    height: 12px;
+    margin: 1rem 0;
+    overflow: hidden;
+    position: relative;
+}
+
+#progress {
+    background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+    height: 100%;
+    width: 0%;
+    border-radius: 8px;
+    transition: width 0.3s ease;
+}
+
+#progressText {
     text-align: center;
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-top: 0.5rem;
+}
+
+/* Enlace de descarga */
+#downloadLink {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    border-radius: 6px;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+#downloadLink:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+#downloadLink:active {
+    transform: translateY(0);
+}
+
+.hidden {
+    display: none !important;
+}
+
+footer {
+    background-color: white;
+    color: var(--text-color);
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Sección de anuncios */
+#ads-section {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1rem;
+    background: transparent;
+    box-shadow: none;
+}
+
+#ads-section:hover {
+    transform: none;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    main {
+        width: 95%;
+        padding: 1rem;
+    }
+
+    section {
+        padding: 1rem;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    #downloadLink {
+        width: 100%;
+        display: block;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+section:not(.hidden) {
+    animation: fadeIn 0.3s ease-out;
 }
