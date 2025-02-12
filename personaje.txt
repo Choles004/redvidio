@@ -1,0 +1,286 @@
+--- START OF FILE personaje.txt ---
+FICHA DE PERSONAJE v2.0: JESÚS "CHOLES" OÑATE
+
+DATOS BASE
+Nombre: Jesús David Oñate Choles
+Alias: "Choles"
+Origen: Riohacha, La Guajira (Colombia)
+Clase: Estratega Visionario / Observador Social
+Nivel actual: 20 (basado en edad)
+Raza: Humano - Subclase: Afrodescendiente
+Alineamiento: Legal Neutral con tendencias al Bien
+
+STATS FÍSICOS (Base 100)
+- Altura: 172 cm
+- Complexión: Definida pero esbelta
+- Resistencia: 65/100
+- Agilidad: 75/100
+- Fuerza actual: 60/100
+- Potencial de desarrollo físico: 85/100
+
+STATS MENTALES (Base 100)
+- Inteligencia: 82/100
+- Creatividad: 88/100
+- Memoria a corto plazo: 45/100
+- Capacidad analítica: 85/100
+- Hiperfoco (TDA): 95/100 (cuando activado)
+- Planificación: 80/100
+
+STATS SOCIALES (Base 100)
+- Carisma inicial: 75/100
+- Adaptabilidad: 85/100
+- Empatía: 40/100
+- Liderazgo potencial: 70/100
+- Diplomacia: 65/100
+
+HABILIDADES ESPECIALES DESBLOQUEADAS
+
+ACTIVAS:
+- "Hiperfoco TDA" (Poder Especial)
+  * Activa concentración extrema en temas de interés
+  * +50% productividad
+  * -75% distracción externa
+  * Cooldown: Variable
+
+- "Adaptación Camaleónica"
+  * Permite ajustar comportamiento según el entorno
+  * +40% aceptación social
+  * -20% energía social por hora
+
+- "Visión Estratégica"
+  * Permite analizar situaciones complejas
+  * +30% toma de decisiones
+  * +25% planificación a largo plazo
+
+PASIVAS:
+- "Código Ético Inquebrantable"
+  * +50% resistencia a influencias negativas
+  * -20% flexibilidad en negociaciones
+  * +30% respeto de aliados
+
+- "Observador Silencioso"
+  * +40% comprensión de dinámicas sociales
+  * +30% análisis de situaciones
+  * -15% participación social espontánea
+
+EQUIPAMIENTO ACTUAL (Metafórico)
+- Armadura: "Escudo de Principios Éticos" (Legendario)
+- Arma Principal: "Perspicacia Analítica" (Raro)
+- Accesorio 1: "Lentes de Visión Futura" (Épico)
+- Accesorio 2: "Amuleto de Resiliencia Familiar" (Único)
+
+ HISTORIA DE ORIGEN
+"Nacido en las tierras de La Guajira, Choles experimentó una pérdida significativa a nivel 14 con la partida de su padre. Este evento actuó como catalizador, activando simultáneamente sus habilidades de supervivencia emocional y su deseo de impacto positivo en su región."
+
+MISIONES ACTUALES
+
+PRINCIPAL:
+"Desarrollo Guajiro"
+- Objetivo: Generar impacto positivo en La Guajira
+- Estado: En preparación
+- Requisitos: Completar misiones secundarias de desarrollo personal
+
+SECUNDARIAS:
+1. "Camino del Guerrero Digital"
+   - Crear plataformas web rentables
+   - Progreso: 15%
+
+2. "Transformación Física"
+   - Alcanzar forma física ideal
+   - Progreso: 30%
+
+3. "Reconexión Familiar"
+   - Mejorar relación maternal
+   - Progreso: 5%
+
+DEBILIDADES Y DESVENTAJAS
+- "Procrastinación Persistente"
+  * -40% iniciativa en tareas no interesantes
+  * +60% probabilidad de postponer
+
+- "Niebla de Memoria"
+  * -30% retención de información cotidiana
+  * +25% dificultad en seguimiento de rutinas
+
+- "Distracción TDA"
+  * -35% concentración en tareas no hiperfocales
+  * +45% susceptibilidad a interrupciones
+
+ POTENCIAL DE DESARROLLO
+
+RAMAS DE EVOLUCIÓN DISPONIBLES:
+1. "Camino del Emprendedor Digital"
+   - Especialización en desarrollo web
+   - Bonus: +30% ingresos pasivos
+
+2. "Senda del Físico Culturista"
+   - Desarrollo corporal óptimo
+   - Bonus: +40% confianza personal
+
+3. "Vía del Estratega Social"
+   - Impacto comunitario
+   - Bonus: +50% influencia regional
+
+CONTROLES DE JUGADOR
+- Modo de juego actual: "Exploración de Caminos"
+- Dificultad: Desafiante
+- Guardado automático: Activado
+- Tutorial de vida: En progreso
+
+ NOTAS DEL DESARROLLADOR
+"Un personaje complejo con alto potencial de desarrollo. Su combinación única de ética fuerte y capacidad de adaptación lo hace especialmente apto para misiones de impacto social. El TDA actúa como una mecánica de juego única que puede ser tanto ventaja como desventaja según la situación."
+
+CARTA DE IDENTIDAD ASTRAL
+- Signo Solar: Virgo
+  * Influencia: Analítico, perfeccionista, servicial
+  * Elemento: Tierra
+  * Cualidad: Mutable
+
+- Ascendente: Piscis
+  * Máscara social: Intuitivo, adaptable, sensible
+  * Elemento: Agua
+  * Don: Capacidad de fundirse con el entorno
+
+- Luna: Virgo
+  * Mundo emocional: Procesamiento analítico de emociones
+  * Necesidades internas: Orden, estructura, mejora continua
+
+- Ascendente Solar: Sagitario
+  * Proyección vital: Explorador, buscador de verdades
+  * Elemento: Fuego
+  * Impulso: Expansión y conocimiento
+
+SISTEMA DE PERSONALIDAD V2.0
+
+NÚCLEO INTERNO (Nuevos descubrimientos):
+
+PATRONES DE PENSAMIENTO:
+- "Bucle Analítico"
+  * Procesa información en ciclos profundos
+  * Puede llevar a sobre-análisis
+  * Activa "Hiperfoco TDA" automáticamente
+
+- "Dualidad Adaptativa"
+  * Exterior: Sociable y adaptable
+  * Interior: Profundo y reflexivo
+  * Cambio automático según el entorno
+
+MOTIVACIONES OCULTAS:
+1. "Búsqueda de Validación Selectiva"
+   * No busca aprobación general
+   * Valora reconocimiento de figuras respetadas
+   * Activador: Logros tangibles
+
+2. "Impulso de Trascendencia"
+   * Deseo de dejar huella en La Guajira
+   * Necesidad de crear impacto duradero
+   * Conflicto con procrastinación
+
+MÁSCARAS SITUACIONALES
+(Diferentes versiones que manifiestas según el contexto)
+
+1. "Máscara del Observador"
+   * Activación: Entornos nuevos
+   * Habilidades: Análisis social, recopilación de información
+   * Debilidad: Puede parecer distante
+
+2. "Máscara del Estratega"
+   * Activación: Situaciones de planificación
+   * Habilidades: Visión a largo plazo, análisis de escenarios
+   * Debilidad: Puede sobre-complicar decisiones simples
+
+3. "Máscara del Camaleón"
+   * Activación: Interacciones sociales
+   * Habilidades: Adaptación, lectura del ambiente
+   * Debilidad: Puede perder autenticidad momentáneamente
+
+CICLOS DE DESARROLLO
+
+CICLO ACTUAL: "Búsqueda de Dirección"
+- Fase 1: Exploración de posibilidades
+- Fase 2: Análisis de capacidades
+- Fase 3: Implementación tentativa
+- Estado: Fase 1 en progreso
+
+PATRONES RECURRENTES:
+1. "Ciclo de Hiperfoco-Procrastinación"
+   * Inicio: Interés intenso
+   * Medio: Desarrollo acelerado
+   * Final: Pérdida gradual de interés
+   * Reinicio: Nuevo objetivo
+
+2. "Ciclo de Adaptación Social"
+   * Inicio: Observación
+   * Medio: Adaptación
+   * Final: Evaluación
+   * Decisión: Mantener o alejarse
+
+MISIONES INTERNAS DESBLOQUEADAS
+
+1. "Búsqueda de Propósito"
+   * Objetivo: Encontrar dirección clara en la vida
+   * Progreso: En desarrollo
+   * Desafío: Mantener consistencia
+
+2. "Maestría Personal"
+   * Objetivo: Desarrollo físico y mental óptimo
+   * Progreso: Activo
+   * Desafío: Procrastinación
+
+3. "Impacto Regional"
+   * Objetivo: Transformar La Guajira
+   * Progreso: Planificación
+   * Desafío: Encontrar punto de partida
+
+SISTEMA DE EVOLUCIÓN PERSONAL
+
+ÁRBOL DE DESARROLLO ACTUAL:
+1. Rama Física
+   * Nivel actual: 7/10
+   * Próximo desbloqueo: "Disciplina Constante"
+   * Requisito: Mantener rutina 30 días
+
+2. Rama Mental
+   * Nivel actual: 8/10
+   * Próximo desbloqueo: "Enfoque Sostenido"
+   * Requisito: Completar proyecto web
+
+3. Rama Social
+   * Nivel actual: 6/10
+   * Próximo desbloqueo: "Conexión Empática"
+   * Requisito: Mejorar relaciones familiares
+
+ POWER-UPS NATURALES
+(Activadores de alto rendimiento)
+
+1. "Modo Hiperfoco"
+   * Activador: Interés genuino
+   * Duración: Variable
+   * Efecto: Productividad máxima
+
+2. "Modo Observador"
+   * Activador: Entornos nuevos
+   * Duración: Primeras horas
+   * Efecto: Comprensión social aumentada
+
+3. "Modo Estratega"
+   * Activador: Desafíos complejos
+   * Duración: Según complejidad
+   * Efecto: Planificación optimizada
+
+CONSEJOS PARA EL JUGADOR
+
+1. Aprovecha tu naturaleza Virgo para:
+   * Organizar ideas y proyectos
+   * Analizar situaciones detalladamente
+   * Mantener altos estándares
+
+2. Usa tu ascendente Piscis para:
+   * Adaptarte a diferentes entornos
+   * Desarrollar intuición social
+   * Mantener flexibilidad mental
+
+3. Potencia tu Sagitario solar para:
+   * Expandir horizontes
+   * Buscar nuevos conocimientos
+   * Mantener optimismo
