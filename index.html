@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ficha RPG Completa - Jesús "Choles" Oñate</title>
+  <!-- Usamos la fuente futurista Orbitron -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,15 +15,18 @@
   </header>
 
   <div class="container">
-    <!-- Sección del Personaje -->
+    <!-- Sección del Personaje y Mi Información -->
     <div class="section profile-section">
       <img src="Personaje.jpg" alt="Foto de perfil" class="profile-image">
-      <h2>Perfil</h2>
+      <h2>Perfil y Mi Información</h2>
       <div id="character-info">
-        <!-- Información adicional del personaje -->
+        <!-- Se cargará la información personal desde mi_info.txt -->
       </div>
       <div id="ia-analysis">
         <!-- Análisis de la IA se mostrará aquí -->
+      </div>
+      <div class="export-buttons">
+        <button onclick="exportarMiInfo()">Exportar Mi Información</button>
       </div>
     </div>
 
@@ -92,6 +97,9 @@
         </div>
         <ul id="taskList" class="task-list"></ul>
       </div>
+      <div class="export-buttons">
+        <button onclick="exportarTareas()">Exportar Tareas</button>
+      </div>
     </div>
 
     <!-- Habilidades -->
@@ -105,7 +113,7 @@
       <h2>Asistente IA</h2>
       <div class="chat-container">
         <div class="chat-box" id="chatBox">
-          <!-- Mensajes del chat se mostrarán aquí -->
+          <!-- Los mensajes del chat aparecerán acá -->
         </div>
         <div class="chat-controls">
           <input type="text" id="iaInput" placeholder="Escribe tu consulta...">
