@@ -1,64 +1,120 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compresor de Archivos Web</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha RPG Completa - Jesús "Choles" Oñate</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Compresor de Archivos Web</h1>
-        <p>Comprime tus archivos directamente en tu navegador.</p>
-    </header>
+  <header>
+    <h1>Ficha de Personaje RPG</h1>
+    <p>Jesús "Choles" Oñate <span id="character-level">Nivel: 1</span></p>
+  </header>
 
-    <main>
-        <section id="file-input-section">
-            <h2>Selecciona los archivos a comprimir</h2>
-            <input type="file" id="fileInput" multiple>
-            <button id="compressButton">Comprimir y Descargar</button>
-        </section>
+  <div class="container">
+    <!-- Sección del Personaje -->
+    <div class="section profile-section">
+      <img src="Personaje.jpg" alt="Foto de perfil" class="profile-image">
+      <h2>Perfil</h2>
+      <div id="character-info">
+        <!-- Información adicional del personaje -->
+      </div>
+      <div id="ia-analysis">
+        <!-- Análisis de la IA se mostrará aquí -->
+      </div>
+    </div>
 
-        <section id="progress-section" class="hidden">
-            <h2>Comprimiendo...</h2>
-            <div id="progressBar">
-                <div id="progress"></div>
-            </div>
-            <p id="progressText">0%</p>
-        </section>
+    <!-- Estadísticas -->
+    <div class="section stats-section">
+      <h2>Estadísticas</h2>
+      <div class="stats-grid">
+        <div class="stat-block">
+          <p><strong>Resistencia:</strong> <span id="level-resistencia">1</span></p>
+          <div class="stat-bar">
+            <div class="stat-fill" id="stat-resistencia"></div>
+          </div>
+          <p class="xp"><span id="xp-resistencia">0</span>/100 XP</p>
+        </div>
+        <div class="stat-block">
+          <p><strong>Agilidad:</strong> <span id="level-agilidad">1</span></p>
+          <div class="stat-bar">
+            <div class="stat-fill" id="stat-agilidad"></div>
+          </div>
+          <p class="xp"><span id="xp-agilidad">0</span>/100 XP</p>
+        </div>
+        <div class="stat-block">
+          <p><strong>Inteligencia:</strong> <span id="level-inteligencia">1</span></p>
+          <div class="stat-bar">
+            <div class="stat-fill" id="stat-inteligencia"></div>
+          </div>
+          <p class="xp"><span id="xp-inteligencia">0</span>/100 XP</p>
+        </div>
+        <div class="stat-block">
+          <p><strong>Creatividad:</strong> <span id="level-creatividad">1</span></p>
+          <div class="stat-bar">
+            <div class="stat-fill" id="stat-creatividad"></div>
+          </div>
+          <p class="xp"><span id="xp-creatividad">0</span>/100 XP</p>
+        </div>
+        <div class="stat-block">
+          <p><strong>Carisma:</strong> <span id="level-carisma">1</span></p>
+          <div class="stat-bar">
+            <div class="stat-fill" id="stat-carisma"></div>
+          </div>
+          <p class="xp"><span id="xp-carisma">0</span>/100 XP</p>
+        </div>
+        <div class="stat-block">
+          <p><strong>Empatía:</strong> <span id="level-empatia">1</span></p>
+          <div class="stat-bar">
+            <div class="stat-fill" id="stat-empatia"></div>
+          </div>
+          <p class="xp"><span id="xp-empatia">0</span>/100 XP</p>
+        </div>
+        <div class="stat-block">
+          <p><strong>Fuerza:</strong> <span id="level-fuerza">1</span></p>
+          <div class="stat-bar">
+            <div class="stat-fill" id="stat-fuerza"></div>
+          </div>
+          <p class="xp"><span id="xp-fuerza">0</span>/100 XP</p>
+        </div>
+      </div>
+    </div>
 
-        <section id="download-section" class="hidden">
-            <h2>¡Compresión completada!</h2>
-            <p>Descarga tu archivo comprimido:</p>
-            <a id="downloadLink" download="archivo_comprimido.zip">Descargar archivo.zip</a>
-        </section>
+    <!-- Gestor de Tareas -->
+    <div class="section task-section">
+      <h2>Gestor de Tareas</h2>
+      <div class="task-manager">
+        <div class="task-input-container">
+          <input type="text" id="taskInput" placeholder="Nueva tarea...">
+          <input type="date" id="taskDate">
+          <button id="addTaskBtn">➕ Añadir</button>
+        </div>
+        <ul id="taskList" class="task-list"></ul>
+      </div>
+    </div>
 
-        <section id="ads-section">
-            <!-- *************************************************** -->
-            <!--  INSERTA TU CÓDIGO DE ANUNCIO DE GOOGLE ADSENSE AQUÍ -->
-            <!-- *************************************************** -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-TU_ID_DE_PUBLICADOR"></script>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-TU_ID_DE_PUBLICADOR"
-                 data-ad-slot="TU_ID_DE_SLOT_DE_ANUNCIO"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-            <!-- *************************************************** -->
-            <!--  RECUERDA REEMPLAZAR TU_ID_DE_PUBLICADOR Y TU_ID_DE_SLOT_DE_ANUNCIO -->
-            <!-- *************************************************** -->
-        </section>
-    </main>
+    <!-- Habilidades -->
+    <div class="section abilities-section">
+      <h2>Habilidades</h2>
+      <ul id="abilitiesList" class="abilities-list"></ul>
+    </div>
 
-    <footer>
-        <p>© 2023 Compresor Web - Desarrollado con JavaScript y jszip.js</p>
-    </footer>
+    <!-- Chat IA -->
+    <div class="section chat-section">
+      <h2>Asistente IA</h2>
+      <div class="chat-container">
+        <div class="chat-box" id="chatBox">
+          <!-- Mensajes del chat se mostrarán aquí -->
+        </div>
+        <div class="chat-controls">
+          <input type="text" id="iaInput" placeholder="Escribe tu consulta...">
+          <button onclick="enviarConsultaIA()">📤 Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <script src="script.js"></script>
-  
+  <script src="script.js"></script>
 </body>
 </html>
