@@ -1,6 +1,6 @@
-/* script.js - Cerebro futurista con gestión de tareas, XP, habilidades y archivos */
+/* script.js - Versión actualizada para registrar XP, eliminar tareas completadas y leer Personaje.txt */
 
-// Claves y URLs para conectar con Google Drive (documentos de estadísticas)
+// Claves y URLs para conectar con Google Drive (estadísticas)
 const GEMINI_API_KEY = 'AIzaSyClb0MndbsAdLSfygl3zdrwYvNfXgL_n5Q';
 const DOCUMENTOS = {
   personaje: 'https://docs.google.com/document/d/1akM5h7FH0Rnns-AzqMe2aIKYSjBVeM03BYE1RHwh4fs/export?format=txt',
@@ -8,14 +8,15 @@ const DOCUMENTOS = {
 };
 
 // Variables globales
+// Se guardan tareas y habilidades en localStorage
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 let abilities = JSON.parse(localStorage.getItem('abilities')) || [];
-// Se intenta cargar stats desde localStorage; si no existen se usará {} y luego se fusionarán con los datos remotos.
+// stats se carga de localStorage o se inicia vacío y luego se fusiona con los datos remotos
 let stats = JSON.parse(localStorage.getItem('stats')) || {};
 
-// Inicialización de la aplicación
+// Inicializa la aplicación
 async function inicializar() {
-  await cargarMiInfo();  // Carga la información personal desde "Personaje.txt"
+  await cargarMiInfo();  // Carga información personal desde "Personaje.txt"
   await cargarDatos();   // Carga estadísticas desde Google Drive y fusiona con las guardadas
   cargarTareas();
   cargarHabilidades();
@@ -36,7 +37,7 @@ async function cargarMiInfo() {
   }
 }
 
-// Carga datos desde Google Drive y fusiona con los stats guardados
+// Carga datos remotos y fusiona con los stats guardados
 async function cargarDatos() {
   try {
     const [respPersonaje, respActualizado] = await Promise.all([
@@ -45,7 +46,7 @@ async function cargarDatos() {
     ]);
     const contenido = respPersonaje + '\n' + respActualizado;
     const fetchedStats = extraerEstadisticas(contenido);
-    // Fusiona: se priorizan los XP locales (si ya fueron actualizados)
+    // Fusiona: se mantienen los XP locales (prioritarios) si ya fueron modificados
     stats = { ...fetchedStats, ...stats };
     localStorage.setItem('stats', JSON.stringify(stats));
     actualizarNiveles();
@@ -55,7 +56,7 @@ async function cargarDatos() {
   }
 }
 
-// Extrae estadísticas del texto usando regex
+// Extrae estadísticas del texto usando regex (ejemplo: "- Resistencia: 65/100")
 function extraerEstadisticas(texto) {
   const statsExtraidas = {};
   const regex = /- (\w+).*?: (\d+)\//g;
@@ -68,15 +69,15 @@ function extraerEstadisticas(texto) {
   return statsExtraidas;
 }
 
-// Actualiza las barras de estadísticas, niveles y XP en la UI
+// Actualiza la interfaz: barras, niveles y XP
 function actualizarNiveles() {
   Object.entries(stats).forEach(([stat, valor]) => {
     const barra = document.getElementById(`stat-${stat}`);
-    if (barra) barra.style.width = `${valor}%`;
+    if (barra) { barra.style.width = `${valor}%`; }
     const nivelElem = document.getElementById(`level-${stat}`);
-    if (nivelElem) nivelElem.textContent = Math.floor(valor / 10);
+    if (nivelElem) { nivelElem.textContent = Math.floor(valor / 10); }
     const xpElem = document.getElementById(`xp-${stat}`);
-    if (xpElem) xpElem.textContent = `${valor} / 100 XP`;
+    if (xpElem) { xpElem.textContent = `${valor} / 100 XP`; }
   });
 }
 
@@ -87,9 +88,7 @@ async function generarAnalisisIA() {
     const respuesta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
     });
     const data = await respuesta.json();
     const textoIA = data.candidates[0].content.parts[0].text;
@@ -100,7 +99,7 @@ async function generarAnalisisIA() {
   }
 }
 
-// Muestra el análisis de la IA en la interfaz
+// Muestra el análisis de la IA en el área designada
 function mostrarAnalisis({ nivel_general, puntos_fuertes, recomendaciones }) {
   const contenedor = document.getElementById('ia-analysis');
   contenedor.innerHTML = `
@@ -112,13 +111,13 @@ function mostrarAnalisis({ nivel_general, puntos_fuertes, recomendaciones }) {
     </div>
   `;
   const headerNivel = document.getElementById('character-level');
-  if (headerNivel) headerNivel.textContent = `Nivel: ${nivel_general}`;
+  if (headerNivel) { headerNivel.textContent = `Nivel: ${nivel_general}`; }
 }
 
 // Carga las tareas desde localStorage y muestra solo las pendientes
 function cargarTareas() {
   const taskList = document.getElementById('taskList');
-  // Filtra las tareas pendientes (completada == false)
+  // Filtramos solo las tareas que NO estén completadas
   const tareasPendientes = tasks.filter(t => !t.completada);
   taskList.innerHTML = tareasPendientes.map(t => `
     <li>
@@ -140,7 +139,7 @@ function guardarTareas() {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// Carga y muestra las habilidades
+// Carga y muestra las habilidades desde localStorage
 function cargarHabilidades() {
   abilities = JSON.parse(localStorage.getItem('abilities')) || [];
   mostrarHabilidades();
@@ -160,16 +159,16 @@ function mostrarHabilidades() {
   `).join('');
 }
 
-// Actualiza XP en una estadística, guarda y actualiza la UI
+// Actualiza el XP para una estadística, guarda y refresca la UI
 function actualizarXP(stat, xpDelta) {
-  if (typeof stats[stat] === 'undefined') stats[stat] = 0;
+  if (typeof stats[stat] === 'undefined') { stats[stat] = 0; }
   stats[stat] += xpDelta;
-  if (stats[stat] < 0) stats[stat] = 0;
+  if (stats[stat] < 0) { stats[stat] = 0; }
   localStorage.setItem('stats', JSON.stringify(stats));
   actualizarNiveles();
 }
 
-// Verifica y desbloquea/actualiza habilidades según tareas completadas
+// Verifica y, en caso, desbloquea o actualiza una habilidad según tareas completadas
 function verificarDesbloqueoHabilidad(categoria) {
   const completedCount = tasks.filter(t => t.completada && (t.stat || "inteligencia") === categoria).length;
   let ability = abilities.find(a => a.category === categoria);
@@ -190,42 +189,46 @@ function verificarDesbloqueoHabilidad(categoria) {
   }
 }
 
-// Función para buscar una tarea por nombre (suponiendo nombres únicos)
+// Función para buscar una tarea por nombre (se asume que es único)
 function buscarTarea(nombre) {
   return tasks.find(t => t.nombre === nombre);
 }
 
-// Marca una tarea como completada, actualiza XP/habilidades y refresca la UI
+// Marca una tarea como completada, suma el XP y actualiza la UI
 function toggleCompletada(nombre) {
-  const t = buscarTarea(nombre);
-  if (!t) return;
-  t.completada = true;
+  const tarea = buscarTarea(nombre);
+  if (!tarea) return;
+  // Marca la tarea como completada
+  tarea.completada = true;
   guardarTareas();
-  cargarTareas(); // Ahora solo se muestran las tareas pendientes
-  const categoria = t.stat || "inteligencia";
+  // Solo se muestran las tareas pendientes, así que al recargar no aparecerá
+  cargarTareas();
+  // Suma XP a la estadística asociada (por defecto "inteligencia")
+  const categoria = tarea.stat || "inteligencia";
   actualizarXP(categoria, +10);
   verificarDesbloqueoHabilidad(categoria);
 }
 
-// Edita una tarea (buscada por nombre)
+// Edita una tarea buscándola por nombre
 function editarTarea(nombre) {
-  const t = buscarTarea(nombre);
-  if (!t) return;
-  const nuevoNombre = prompt('Editar tarea:', t.nombre);
+  const tarea = buscarTarea(nombre);
+  if (!tarea) return;
+  const nuevoNombre = prompt('Editar tarea:', tarea.nombre);
   if (nuevoNombre) {
-    t.nombre = nuevoNombre;
+    tarea.nombre = nuevoNombre;
     guardarTareas();
     cargarTareas();
   }
 }
 
-// Elimina una tarea (buscada por nombre)
+// Elimina una tarea (se filtran todas las que coincidan con el nombre)
 function eliminarTarea(nombre) {
   tasks = tasks.filter(t => t.nombre !== nombre);
   guardarTareas();
   cargarTareas();
 }
 
+// Agrega una nueva tarea (se asume categoría por defecto "inteligencia")
 document.getElementById('addTaskBtn').addEventListener('click', () => {
   const nombre = document.getElementById('taskInput').value.trim();
   const fecha = document.getElementById('taskDate').value;
@@ -234,14 +237,14 @@ document.getElementById('addTaskBtn').addEventListener('click', () => {
       nombre: nombre,
       fecha: fecha,
       completada: false,
-      stat: "inteligencia"  // Por defecto se asigna esta categoría
+      stat: "inteligencia"
     });
     guardarTareas();
     cargarTareas();
   }
 });
 
-// Envía la consulta del usuario al ChatBot con IA
+// Envía la consulta al ChatBot con IA (la respuesta puede incluir nuevas tareas)
 async function enviarConsultaIA() {
   const input = document.getElementById('iaInput');
   const mensaje = input.value.trim();
@@ -265,13 +268,13 @@ async function enviarConsultaIA() {
     }
     agregarMensajeChat('ia', respuestaIA.respuesta);
     if (Array.isArray(respuestaIA.tareas) && respuestaIA.tareas.length > 0) {
-      respuestaIA.tareas.forEach(t => {
-        if (t.nombre && t.fecha) {
+      respuestaIA.tareas.forEach(nuevaTarea => {
+        if (nuevaTarea.nombre && nuevaTarea.fecha) {
           tasks.push({
-            nombre: t.nombre,
-            fecha: t.fecha,
+            nombre: nuevaTarea.nombre,
+            fecha: nuevaTarea.fecha,
             completada: false,
-            stat: t.stat || "inteligencia"
+            stat: nuevaTarea.stat || "inteligencia"
           });
         }
       });
@@ -301,10 +304,10 @@ function verificarTareas() {
 
 // Actualiza la UI general (otros ajustes si se requieren)
 function actualizarUI() {
-  // Aquí se pueden colocar otras actualizaciones si son necesarias
+  // Aquí puedes colocar otros cambios si son necesarios
 }
 
-// Funciones para exportar datos a archivos de texto
+// Funciones para exportar datos a archivos de texto (se activan manualmente)
 function exportarTareas() {
   const data = JSON.stringify(tasks, null, 2);
   const blob = new Blob([data], { type: 'text/plain' });
