@@ -3,29 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ficha RPG Completa - Jesús "Choles" Oñate</title>
+  <title>Sistema RPG Anime - Jesús "Choles" Oñate</title>
   <!-- Fuente futurista Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <h1>Ficha de Personaje RPG</h1>
+    <h1>Sistema RPG Anime</h1>
     <p>Jesús "Choles" Oñate <span id="character-level">Nivel: 1</span></p>
   </header>
 
   <div class="container">
-    <!-- Sección del Personaje y Mi Información -->
+    <!-- Sección de Perfil e Información -->
     <div class="section profile-section">
-      <img src="Personaje.jpg" alt="Foto de perfil" class="profile-image">
-      <h2>Perfil y Mi Información</h2>
-      <!-- Aquí se carga la información personal desde "Personaje.txt" -->
-      <div id="character-info"></div>
-      <div id="ia-analysis">
-        <!-- Análisis de la IA se mostrará aquí -->
+      <img src="Personaje.jpg" alt="Foto de perfil" class="profile-image" id="profilePhoto">
+      <h2>Perfil e Información</h2>
+      <!-- Aquí se mostrará la información importada -->
+      <div id="character-info">Importa tu archivo de información...</div>
+      <div class="file-inputs">
+         <label>Importar Info TXT:
+           <input type="file" id="infoFile" accept=".txt">
+         </label>
+         <label>Importar Foto:
+           <input type="file" id="photoFile" accept="image/*">
+         </label>
       </div>
+      <div id="ia-analysis"></div>
       <div class="export-buttons">
-        <button onclick="exportarMiInfo()">Exportar Mi Información</button>
+         <button onclick="exportarMiInfo()">Exportar Mi Información</button>
       </div>
     </div>
 
@@ -85,40 +91,48 @@
       </div>
     </div>
 
+    <!-- Recompensas (Elixires) -->
+    <div class="section rewards-section">
+      <h2>Recompensas</h2>
+      <div id="rewardsDisplay">
+         <p>HP Elixirs: <span id="hpElixir">0</span></p>
+         <p>Strength Elixirs: <span id="strengthElixir">0</span></p>
+      </div>
+    </div>
+
     <!-- Gestor de Tareas -->
     <div class="section task-section">
       <h2>Gestor de Tareas</h2>
       <div class="task-manager">
-        <div class="task-input-container">
-          <input type="text" id="taskInput" placeholder="Nueva tarea...">
-          <input type="date" id="taskDate">
-          <button id="addTaskBtn">➕ Añadir</button>
-        </div>
-        <!-- Solo se mostrarán las tareas pendientes (no completadas) -->
-        <ul id="taskList" class="task-list"></ul>
+         <div class="task-input-container">
+           <input type="text" id="taskInput" placeholder="Nueva tarea...">
+           <input type="date" id="taskDate">
+           <select id="taskDifficulty">
+             <option value="medium" selected>Medio</option>
+             <option value="easy">Fácil</option>
+             <option value="hard">Difícil</option>
+           </select>
+           <button id="addTaskBtn">➕ Añadir</button>
+         </div>
+         <!-- Se muestran solo las tareas pendientes -->
+         <ul id="taskList" class="task-list"></ul>
       </div>
       <div class="export-buttons">
-        <button onclick="exportarTareas()">Exportar Tareas</button>
+         <button onclick="exportarTareas()">Exportar Tareas</button>
       </div>
-    </div>
-
-    <!-- Habilidades -->
-    <div class="section abilities-section">
-      <h2>Habilidades</h2>
-      <ul id="abilitiesList" class="abilities-list"></ul>
     </div>
 
     <!-- Chat IA -->
     <div class="section chat-section">
       <h2>Asistente IA</h2>
       <div class="chat-container">
-        <div class="chat-box" id="chatBox">
-          <!-- Mensajes del chat aparecerán aquí -->
-        </div>
-        <div class="chat-controls">
-          <input type="text" id="iaInput" placeholder="Escribe tu consulta...">
-          <button onclick="enviarConsultaIA()">📤 Enviar</button>
-        </div>
+         <div class="chat-box" id="chatBox">
+           <!-- Los mensajes del chat aparecerán acá -->
+         </div>
+         <div class="chat-controls">
+           <input type="text" id="iaInput" placeholder="Escribe tu consulta...">
+           <button onclick="enviarConsultaIA()">📤 Enviar</button>
+         </div>
       </div>
     </div>
   </div>
