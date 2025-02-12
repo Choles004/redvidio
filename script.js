@@ -14,20 +14,20 @@ let stats = {};
 
 // Inicialización de la aplicación
 async function inicializar() {
-  await cargarMiInfo();  // Carga tu info personal desde "mi_info.txt"
-  await cargarDatos();   // Carga datos de estadísticas desde Google Drive
+  await cargarMiInfo();  // Carga tu información personal desde "Personaje.txt"
+  await cargarDatos();   // Carga estadísticas desde Google Drive
   cargarTareas();
   cargarHabilidades();
   actualizarUI();
   setInterval(verificarTareas, 60000); // Revisa tareas cada minuto
 }
 
-// Carga información personal desde "mi_info.txt"
+// Carga la información personal desde "Personaje.txt"
 async function cargarMiInfo() {
   try {
-    const response = await fetch('mi_info.txt');
+    const response = await fetch('Personaje.txt');
     if (!response.ok) {
-      throw new Error('No se pudo cargar mi_info.txt');
+      throw new Error('No se pudo cargar Personaje.txt');
     }
     const text = await response.text();
     document.getElementById('character-info').innerText = text;
@@ -37,7 +37,7 @@ async function cargarMiInfo() {
   }
 }
 
-// Carga datos desde Google Drive y actualiza estadísticas
+// Carga datos desde Google Drive y actualiza las estadísticas
 async function cargarDatos() {
   try {
     const [respPersonaje, respActualizado] = await Promise.all([
@@ -54,36 +54,38 @@ async function cargarDatos() {
   }
 }
 
-// Extrae estadísticas del texto (usando regex)
+// Extrae estadísticas del texto usando regex
 function extraerEstadisticas(texto) {
   const statsExtraidas = {};
   const regex = /- (\w+).*?: (\d+)\//g;
   let coincidencia;
-  
   while ((coincidencia = regex.exec(texto)) !== null) {
     const stat = coincidencia[1].toLowerCase();
     const valor = parseInt(coincidencia[2]);
     statsExtraidas[stat] = valor;
   }
-  
   return statsExtraidas;
 }
 
-// Actualiza las barras de estadísticas y niveles en la UI
+// Actualiza las barras de estadísticas, niveles y XP en la UI
 function actualizarNiveles() {
   Object.entries(stats).forEach(([stat, valor]) => {
-    const elementoBarra = document.getElementById(`stat-${stat}`);
-    if (elementoBarra) {
-      elementoBarra.style.width = `${valor}%`;
+    const barra = document.getElementById(`stat-${stat}`);
+    if (barra) {
+      barra.style.width = `${valor}%`;
     }
-    const elementoNivel = document.getElementById(`level-${stat}`);
-    if (elementoNivel) {
-      elementoNivel.textContent = Math.floor(valor / 10);
+    const nivelElem = document.getElementById(`level-${stat}`);
+    if (nivelElem) {
+      nivelElem.textContent = Math.floor(valor / 10);
+    }
+    const xpElem = document.getElementById(`xp-${stat}`);
+    if (xpElem) {
+      xpElem.textContent = `${valor} / 100 XP`;
     }
   });
 }
 
-// Genera un análisis con la API Gemini y lo muestra en la ficha
+// Llama a la API Gemini para generar un análisis y lo muestra
 async function generarAnalisisIA() {
   try {
     const prompt = `Analiza este personaje RPG y genera un resumen en formato JSON con: nivel_general, puntos_fuertes, recomendaciones. Datos: ${JSON.stringify(stats)}`;
@@ -96,7 +98,6 @@ async function generarAnalisisIA() {
         }]
       })
     });
-    
     const data = await respuesta.json();
     const textoIA = data.candidates[0].content.parts[0].text;
     const analisis = JSON.parse(textoIA);
@@ -106,7 +107,7 @@ async function generarAnalisisIA() {
   }
 }
 
-// Muestra el análisis de la IA en la UI
+// Muestra el análisis de la IA en la interfaz
 function mostrarAnalisis({ nivel_general, puntos_fuertes, recomendaciones }) {
   const contenedor = document.getElementById('ia-analysis');
   contenedor.innerHTML = `
@@ -123,18 +124,19 @@ function mostrarAnalisis({ nivel_general, puntos_fuertes, recomendaciones }) {
   }
 }
 
-// Carga las tareas desde localStorage y las muestra
+// Carga las tareas desde localStorage y muestra solo las pendientes (no completadas)
 function cargarTareas() {
   const taskList = document.getElementById('taskList');
-  taskList.innerHTML = tasks.map((tarea, index) => `
-    <li class="${tarea.completada ? 'completada' : ''}">
+  const tareasPendientes = tasks.filter(tarea => !tarea.completada);
+  taskList.innerHTML = tareasPendientes.map((tarea, index) => `
+    <li>
       <div class="tarea-info">
         <h4>${tarea.nombre}</h4>
         <p>📅 ${tarea.fecha} | ${tarea.completada ? '✅ Completada' : '🟡 En progreso'}</p>
       </div>
       <div class="tarea-acciones">
-        <button class="complete-btn" onclick="toggleCompletada(${index})">
-          ${tarea.completada ? '↩️ Revertir' : '✔️ Completar'}
+        <button class="complete-btn" onclick="toggleCompletada(${index}, '${tarea.nombre}')">
+          ✔️ Completar
         </button>
         <button class="edit-btn" onclick="editarTarea(${index})">✏️ Editar</button>
         <button class="delete-btn" onclick="eliminarTarea(${index})">🗑️ Eliminar</button>
@@ -148,7 +150,7 @@ function guardarTareas() {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// Carga y muestra las habilidades desde localStorage
+// Carga y muestra las habilidades
 function cargarHabilidades() {
   abilities = JSON.parse(localStorage.getItem('abilities')) || [];
   mostrarHabilidades();
@@ -168,7 +170,7 @@ function mostrarHabilidades() {
   `).join('');
 }
 
-// Actualiza XP en una estadística dada
+// Actualiza XP en una estadística y refresca la UI
 function actualizarXP(stat, xpDelta) {
   if (typeof stats[stat] === 'undefined') {
     stats[stat] = 0;
@@ -178,7 +180,7 @@ function actualizarXP(stat, xpDelta) {
   actualizarNiveles();
 }
 
-// Verifica y desbloquea o actualiza habilidades según tareas completadas
+// Verifica y desbloquea/actualiza habilidades según tareas completadas
 function verificarDesbloqueoHabilidad(categoria) {
   const completedCount = tasks.filter(t => t.completada && (t.stat || "inteligencia") === categoria).length;
   let ability = abilities.find(a => a.category === categoria);
@@ -199,27 +201,22 @@ function verificarDesbloqueoHabilidad(categoria) {
   }
 }
 
-// Alterna el estado completado de una tarea y actualiza XP/habilidades
-window.toggleCompletada = function(index) {
-  const task = tasks[index];
-  const wasCompleted = task.completada;
-  task.completada = !task.completada;
+// Alterna el estado de una tarea y actualiza XP/habilidades  
+// (si se completa, se deja de mostrar en la UI, pero se conserva en tasks)
+window.toggleCompletada = function(index, nombre) {
+  // Buscamos la tarea en el array original (teniendo en cuenta que en la UI se filtraron)
+  const tareaIndex = tasks.findIndex(t => t.nombre === nombre && !t.completada);
+  if (tareaIndex === -1) return;
+  const task = tasks[tareaIndex];
+  task.completada = true;
   guardarTareas();
+  // Actualizamos la UI: se ocultará al recargar tareas pendientes
   cargarTareas();
   
   const categoria = task.stat || "inteligencia";
-  if (!wasCompleted && task.completada) {
-    actualizarXP(categoria, +10);
-    verificarDesbloqueoHabilidad(categoria);
-  } else if (wasCompleted && !task.completada) {
-    actualizarXP(categoria, -10);
-    let ability = abilities.find(a => a.category === categoria);
-    if (ability) {
-      ability.xp = Math.max(0, ability.xp - 10);
-      guardarHabilidades();
-      mostrarHabilidades();
-    }
-  }
+  // Si se completa la tarea, suma XP y verifica la habilidad
+  actualizarXP(categoria, +10);
+  verificarDesbloqueoHabilidad(categoria);
 };
 
 window.editarTarea = function(index) {
@@ -242,7 +239,6 @@ window.eliminarTarea = function(index) {
 document.getElementById('addTaskBtn').addEventListener('click', () => {
   const nombre = document.getElementById('taskInput').value.trim();
   const fecha = document.getElementById('taskDate').value;
-  
   if (nombre && fecha) {
     tasks.push({
       nombre: nombre,
@@ -322,7 +318,7 @@ function verificarTareas() {
   console.log('Verificando tareas...');
 }
 
-// Actualiza la UI general (si se requieren otros cambios)
+// Actualiza la UI general (otros ajustes si se requieren)
 function actualizarUI() {
   // Más actualizaciones si son necesarias
 }
@@ -345,7 +341,7 @@ function exportarMiInfo() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'mi_info.txt';
+  a.download = 'informacion.txt'; // Ahora se descarga como informacion.txt
   a.click();
   URL.revokeObjectURL(url);
 }
