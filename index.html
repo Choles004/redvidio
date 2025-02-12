@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ficha RPG Completa - Jesús "Choles" Oñate</title>
-  <!-- Usamos la fuente futurista Orbitron -->
+  <!-- Fuente futurista Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -19,9 +19,8 @@
     <div class="section profile-section">
       <img src="Personaje.jpg" alt="Foto de perfil" class="profile-image">
       <h2>Perfil y Mi Información</h2>
-      <div id="character-info">
-        <!-- Se cargará la información personal desde mi_info.txt -->
-      </div>
+      <!-- Aquí se carga la información personal desde "Personaje.txt" -->
+      <div id="character-info"></div>
       <div id="ia-analysis">
         <!-- Análisis de la IA se mostrará aquí -->
       </div>
@@ -39,49 +38,49 @@
           <div class="stat-bar">
             <div class="stat-fill" id="stat-resistencia"></div>
           </div>
-          <p class="xp"><span id="xp-resistencia">0</span>/100 XP</p>
+          <p class="xp"><span id="xp-resistencia">0 / 100 XP</span></p>
         </div>
         <div class="stat-block">
           <p><strong>Agilidad:</strong> <span id="level-agilidad">1</span></p>
           <div class="stat-bar">
             <div class="stat-fill" id="stat-agilidad"></div>
           </div>
-          <p class="xp"><span id="xp-agilidad">0</span>/100 XP</p>
+          <p class="xp"><span id="xp-agilidad">0 / 100 XP</span></p>
         </div>
         <div class="stat-block">
           <p><strong>Inteligencia:</strong> <span id="level-inteligencia">1</span></p>
           <div class="stat-bar">
             <div class="stat-fill" id="stat-inteligencia"></div>
           </div>
-          <p class="xp"><span id="xp-inteligencia">0</span>/100 XP</p>
+          <p class="xp"><span id="xp-inteligencia">0 / 100 XP</span></p>
         </div>
         <div class="stat-block">
           <p><strong>Creatividad:</strong> <span id="level-creatividad">1</span></p>
           <div class="stat-bar">
             <div class="stat-fill" id="stat-creatividad"></div>
           </div>
-          <p class="xp"><span id="xp-creatividad">0</span>/100 XP</p>
+          <p class="xp"><span id="xp-creatividad">0 / 100 XP</span></p>
         </div>
         <div class="stat-block">
           <p><strong>Carisma:</strong> <span id="level-carisma">1</span></p>
           <div class="stat-bar">
             <div class="stat-fill" id="stat-carisma"></div>
           </div>
-          <p class="xp"><span id="xp-carisma">0</span>/100 XP</p>
+          <p class="xp"><span id="xp-carisma">0 / 100 XP</span></p>
         </div>
         <div class="stat-block">
           <p><strong>Empatía:</strong> <span id="level-empatia">1</span></p>
           <div class="stat-bar">
             <div class="stat-fill" id="stat-empatia"></div>
           </div>
-          <p class="xp"><span id="xp-empatia">0</span>/100 XP</p>
+          <p class="xp"><span id="xp-empatia">0 / 100 XP</span></p>
         </div>
         <div class="stat-block">
           <p><strong>Fuerza:</strong> <span id="level-fuerza">1</span></p>
           <div class="stat-bar">
             <div class="stat-fill" id="stat-fuerza"></div>
           </div>
-          <p class="xp"><span id="xp-fuerza">0</span>/100 XP</p>
+          <p class="xp"><span id="xp-fuerza">0 / 100 XP</span></p>
         </div>
       </div>
     </div>
@@ -95,6 +94,7 @@
           <input type="date" id="taskDate">
           <button id="addTaskBtn">➕ Añadir</button>
         </div>
+        <!-- Solo se mostrarán las tareas pendientes (no completadas) -->
         <ul id="taskList" class="task-list"></ul>
       </div>
       <div class="export-buttons">
@@ -113,7 +113,7 @@
       <h2>Asistente IA</h2>
       <div class="chat-container">
         <div class="chat-box" id="chatBox">
-          <!-- Los mensajes del chat aparecerán acá -->
+          <!-- Mensajes del chat aparecerán aquí -->
         </div>
         <div class="chat-controls">
           <input type="text" id="iaInput" placeholder="Escribe tu consulta...">
