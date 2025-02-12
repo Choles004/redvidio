@@ -114,6 +114,7 @@ header {
   margin: 0;
 }
 
+/* Solo se muestran tareas pendientes */
 .task-list li {
   display: flex;
   justify-content: space-between;
@@ -154,9 +155,7 @@ header {
 .delete-btn { background: #e74c3c; color: white; }
 
 /* Habilidades */
-.abilities-section {
-  /* Se estiliza de forma similar a las demás secciones */
-}
+.abilities-section { }
 
 .abilities-list {
   list-style: none;
