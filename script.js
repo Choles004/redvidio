@@ -1,4 +1,4 @@
-/* script.js - Versión actualizada para registrar XP, eliminar tareas completadas y leer Personaje.txt */
+/* script.js - Sistema RPG Anime con importación dinámica, recompensas y animaciones */
 
 // Claves y URLs para conectar con Google Drive (estadísticas)
 const GEMINI_API_KEY = 'AIzaSyClb0MndbsAdLSfygl3zdrwYvNfXgL_n5Q';
@@ -8,20 +8,47 @@ const DOCUMENTOS = {
 };
 
 // Variables globales
-// Se guardan tareas y habilidades en localStorage
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 let abilities = JSON.parse(localStorage.getItem('abilities')) || [];
-// stats se carga de localStorage o se inicia vacío y luego se fusiona con los datos remotos
+// Se carga stats de localStorage o se inicia vacío; luego se fusionarán los datos remotos
 let stats = JSON.parse(localStorage.getItem('stats')) || {};
 
-// Inicializa la aplicación
+// Aseguramos que existan las propiedades de recompensas
+if (typeof stats.hpElixir === 'undefined') stats.hpElixir = 0;
+if (typeof stats.strengthElixir === 'undefined') stats.strengthElixir = 0;
+
 async function inicializar() {
-  await cargarMiInfo();  // Carga información personal desde "Personaje.txt"
-  await cargarDatos();   // Carga estadísticas desde Google Drive y fusiona con las guardadas
+  await cargarMiInfo();  // Carga la información personal desde "Personaje.txt"
+  await cargarDatos();   // Carga estadísticas desde Google Drive y fusiona con las locales
   cargarTareas();
   cargarHabilidades();
   actualizarUI();
-  setInterval(verificarTareas, 60000); // Revisa tareas cada minuto
+  setInterval(verificarTareas, 60000);
+  // Configura eventos para importar archivos
+  configurarImportadores();
+}
+
+function configurarImportadores() {
+  document.getElementById('infoFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const content = event.target.result;
+      document.getElementById('character-info').innerText = content;
+      // Aquí podrías parsear el contenido para actualizar nombre, nivel, etc.
+    }
+    reader.readAsText(file);
+  });
+  document.getElementById('photoFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      document.getElementById('profilePhoto').src = event.target.result;
+    }
+    reader.readAsDataURL(file);
+  });
 }
 
 // Carga la información personal desde "Personaje.txt"
@@ -37,16 +64,15 @@ async function cargarMiInfo() {
   }
 }
 
-// Carga datos remotos y fusiona con los stats guardados
+// Carga datos remotos y fusiona con stats locales
 async function cargarDatos() {
   try {
-    const [respPersonaje, respActualizado] = await Promise.all([
+    const [resp1, resp2] = await Promise.all([
       fetch(DOCUMENTOS.personaje).then(r => r.text()),
       fetch(DOCUMENTOS.actualizado).then(r => r.text())
     ]);
-    const contenido = respPersonaje + '\n' + respActualizado;
+    const contenido = resp1 + '\n' + resp2;
     const fetchedStats = extraerEstadisticas(contenido);
-    // Fusiona: se mantienen los XP locales (prioritarios) si ya fueron modificados
     stats = { ...fetchedStats, ...stats };
     localStorage.setItem('stats', JSON.stringify(stats));
     actualizarNiveles();
@@ -56,7 +82,7 @@ async function cargarDatos() {
   }
 }
 
-// Extrae estadísticas del texto usando regex (ejemplo: "- Resistencia: 65/100")
+// Extrae estadísticas del texto (por ejemplo, "- Resistencia: 65/100")
 function extraerEstadisticas(texto) {
   const statsExtraidas = {};
   const regex = /- (\w+).*?: (\d+)\//g;
@@ -69,9 +95,10 @@ function extraerEstadisticas(texto) {
   return statsExtraidas;
 }
 
-// Actualiza la interfaz: barras, niveles y XP
+// Actualiza las barras de estadísticas, niveles y XP
 function actualizarNiveles() {
   Object.entries(stats).forEach(([stat, valor]) => {
+    if (stat === 'hpElixir' || stat === 'strengthElixir') return;
     const barra = document.getElementById(`stat-${stat}`);
     if (barra) { barra.style.width = `${valor}%`; }
     const nivelElem = document.getElementById(`level-${stat}`);
@@ -79,9 +106,16 @@ function actualizarNiveles() {
     const xpElem = document.getElementById(`xp-${stat}`);
     if (xpElem) { xpElem.textContent = `${valor} / 100 XP`; }
   });
+  actualizarRecompensas();
 }
 
-// Llama a la API Gemini para generar un análisis y lo muestra
+// Actualiza el display de recompensas
+function actualizarRecompensas() {
+  document.getElementById('hpElixir').textContent = stats.hpElixir;
+  document.getElementById('strengthElixir').textContent = stats.strengthElixir;
+}
+
+// Llama a la API Gemini para generar un análisis basado en los stats
 async function generarAnalisisIA() {
   try {
     const prompt = `Analiza este personaje RPG y genera un resumen en formato JSON con: nivel_general, puntos_fuertes, recomendaciones. Datos: ${JSON.stringify(stats)}`;
@@ -99,7 +133,7 @@ async function generarAnalisisIA() {
   }
 }
 
-// Muestra el análisis de la IA en el área designada
+// Muestra el análisis generado por la IA
 function mostrarAnalisis({ nivel_general, puntos_fuertes, recomendaciones }) {
   const contenedor = document.getElementById('ia-analysis');
   contenedor.innerHTML = `
@@ -117,13 +151,12 @@ function mostrarAnalisis({ nivel_general, puntos_fuertes, recomendaciones }) {
 // Carga las tareas desde localStorage y muestra solo las pendientes
 function cargarTareas() {
   const taskList = document.getElementById('taskList');
-  // Filtramos solo las tareas que NO estén completadas
   const tareasPendientes = tasks.filter(t => !t.completada);
   taskList.innerHTML = tareasPendientes.map(t => `
     <li>
       <div class="tarea-info">
         <h4>${t.nombre}</h4>
-        <p>📅 ${t.fecha} | 🟡 En progreso</p>
+        <p>📅 ${t.fecha} | Dificultad: ${t.difficulty}</p>
       </div>
       <div class="tarea-acciones">
         <button class="complete-btn" onclick="toggleCompletada('${t.nombre}')">✔️ Completar</button>
@@ -159,16 +192,21 @@ function mostrarHabilidades() {
   `).join('');
 }
 
-// Actualiza el XP para una estadística, guarda y refresca la UI
+// Actualiza XP en una estadística; agrega animación en la barra
 function actualizarXP(stat, xpDelta) {
   if (typeof stats[stat] === 'undefined') { stats[stat] = 0; }
   stats[stat] += xpDelta;
   if (stats[stat] < 0) { stats[stat] = 0; }
   localStorage.setItem('stats', JSON.stringify(stats));
+  const barra = document.getElementById(`stat-${stat}`);
+  if (barra) {
+    barra.classList.add('animate-xp');
+    setTimeout(() => { barra.classList.remove('animate-xp'); }, 1000);
+  }
   actualizarNiveles();
 }
 
-// Verifica y, en caso, desbloquea o actualiza una habilidad según tareas completadas
+// Verifica y desbloquea o actualiza una habilidad según tareas completadas en una categoría
 function verificarDesbloqueoHabilidad(categoria) {
   const completedCount = tasks.filter(t => t.completada && (t.stat || "inteligencia") === categoria).length;
   let ability = abilities.find(a => a.category === categoria);
@@ -189,27 +227,36 @@ function verificarDesbloqueoHabilidad(categoria) {
   }
 }
 
-// Función para buscar una tarea por nombre (se asume que es único)
+// Busca una tarea por su nombre (se asume que es único)
 function buscarTarea(nombre) {
   return tasks.find(t => t.nombre === nombre);
 }
 
-// Marca una tarea como completada, suma el XP y actualiza la UI
+// Marca una tarea como completada, suma XP, otorga recompensas y refresca la UI
 function toggleCompletada(nombre) {
   const tarea = buscarTarea(nombre);
   if (!tarea) return;
-  // Marca la tarea como completada
   tarea.completada = true;
   guardarTareas();
-  // Solo se muestran las tareas pendientes, así que al recargar no aparecerá
   cargarTareas();
-  // Suma XP a la estadística asociada (por defecto "inteligencia")
   const categoria = tarea.stat || "inteligencia";
   actualizarXP(categoria, +10);
   verificarDesbloqueoHabilidad(categoria);
+  
+  // Recompensas según dificultad
+  let difficulty = tarea.difficulty || "medium";
+  if (difficulty === "hard" && Math.random() > 0.7) {
+    stats.strengthElixir += 1;
+    agregarMensajeChat('ia', "¡Has ganado un Elixir de Fortalecimiento por una tarea difícil!");
+  } else if (difficulty === "easy" && Math.random() > 0.8) {
+    stats.hpElixir += 1;
+    agregarMensajeChat('ia', "¡Has ganado un Elixir de HP por una tarea sencilla!");
+  }
+  localStorage.setItem('stats', JSON.stringify(stats));
+  actualizarNiveles();
 }
 
-// Edita una tarea buscándola por nombre
+// Edita una tarea (buscada por nombre)
 function editarTarea(nombre) {
   const tarea = buscarTarea(nombre);
   if (!tarea) return;
@@ -221,30 +268,32 @@ function editarTarea(nombre) {
   }
 }
 
-// Elimina una tarea (se filtran todas las que coincidan con el nombre)
+// Elimina una tarea (por nombre)
 function eliminarTarea(nombre) {
   tasks = tasks.filter(t => t.nombre !== nombre);
   guardarTareas();
   cargarTareas();
 }
 
-// Agrega una nueva tarea (se asume categoría por defecto "inteligencia")
+// Agrega una nueva tarea (incluye dificultad)
 document.getElementById('addTaskBtn').addEventListener('click', () => {
   const nombre = document.getElementById('taskInput').value.trim();
   const fecha = document.getElementById('taskDate').value;
+  const difficulty = document.getElementById('taskDifficulty').value;
   if (nombre && fecha) {
     tasks.push({
       nombre: nombre,
       fecha: fecha,
       completada: false,
-      stat: "inteligencia"
+      stat: "inteligencia",  // Por defecto
+      difficulty: difficulty
     });
     guardarTareas();
     cargarTareas();
   }
 });
 
-// Envía la consulta al ChatBot con IA (la respuesta puede incluir nuevas tareas)
+// Envía la consulta al ChatBot con IA; si detecta palabras clave, puede generar tareas automáticamente
 async function enviarConsultaIA() {
   const input = document.getElementById('iaInput');
   const mensaje = input.value.trim();
@@ -252,7 +301,7 @@ async function enviarConsultaIA() {
   agregarMensajeChat('usuario', mensaje);
   input.value = '';
   try {
-    const prompt = `El usuario dice: "${mensaje}". Si este mensaje indica que va a realizar una actividad o tarea, clasifícala y genera una tarea en formato JSON con la estructura: { "nombre": "tarea", "fecha": "YYYY-MM-DD", "stat": "categoria opcional" }. Además, responde de forma instructiva y, si es necesario, sugiere nuevas tareas basadas en metas mensuales o anuales. Responde en formato JSON con { "respuesta": "tu respuesta", "tareas": [ ... ] } si aplica.`;
+    const prompt = `El usuario dice: "${mensaje}". Si este mensaje indica que debe realizar una actividad o tarea, clasifícala y genera una tarea en formato JSON con la estructura: { "nombre": "tarea", "fecha": "YYYY-MM-DD", "stat": "categoria opcional", "difficulty": "easy|medium|hard" }. Además, responde de forma instructiva y, si es necesario, sugiere nuevas tareas basadas en metas. Responde en formato JSON con { "respuesta": "tu respuesta", "tareas": [ ... ] } si aplica.`;
     const respuesta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -274,7 +323,8 @@ async function enviarConsultaIA() {
             nombre: nuevaTarea.nombre,
             fecha: nuevaTarea.fecha,
             completada: false,
-            stat: nuevaTarea.stat || "inteligencia"
+            stat: nuevaTarea.stat || "inteligencia",
+            difficulty: nuevaTarea.difficulty || "medium"
           });
         }
       });
@@ -302,12 +352,12 @@ function verificarTareas() {
   console.log('Verificando tareas...');
 }
 
-// Actualiza la UI general (otros ajustes si se requieren)
+// Actualiza la UI general (aquí podrías agregar más actualizaciones)
 function actualizarUI() {
-  // Aquí puedes colocar otros cambios si son necesarios
+  // Otros ajustes si se requieren
 }
 
-// Funciones para exportar datos a archivos de texto (se activan manualmente)
+// Funciones para exportar datos a archivos de texto (se activan mediante botón)
 function exportarTareas() {
   const data = JSON.stringify(tasks, null, 2);
   const blob = new Blob([data], { type: 'text/plain' });
@@ -330,5 +380,4 @@ function exportarMiInfo() {
   URL.revokeObjectURL(url);
 }
 
-// Inicializa la aplicación cuando se carga el DOM
 document.addEventListener('DOMContentLoaded', inicializar);
