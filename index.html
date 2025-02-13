@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema</title>
+  <!-- Fuente futurista -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Usamos defer para que el script se cargue tras el DOM -->
+  <script src="script.js" defer></script>
+</head>
+<!-- La clase se actualizará a neon-blue o neon-red según el estado de las misiones -->
+<body class="neon-blue">
+  <header>
+    <h1 id="headerTitle">Sistema</h1>
+  </header>
+  <div class="container">
+    <!-- Sección de Perfil -->
+    <section id="profileSection" class="section profile-section">
+      <div class="profile-header">
+        <img id="profilePhoto" src="default-profile.jpg" alt="Foto de perfil">
+        <div class="profile-controls">
+          <label class="file-label">
+            📸 Cambiar foto
+            <input type="file" id="photoFile" accept="image/*">
+          </label>
+          <label class="file-label">
+            📁 Importar informe
+            <input type="file" id="infoFile" accept=".txt">
+          </label>
+        </div>
+      </div>
+      <div id="character-info" class="character-info">
+        <!-- Se actualizará con la información del personaje -->
+      </div>
+    </section>
+
+    <!-- Sección de Estadísticas -->
+    <section id="statsSection" class="section stats-section">
+      <h2>Estadísticas</h2>
+      <div id="statsContainer" class="stats-container"></div>
+    </section>
+
+    <!-- Sección de Habilidades -->
+    <section id="abilitiesSection" class="section abilities-section">
+      <h2>Habilidades</h2>
+      <div id="abilitiesContainer" class="abilities-container"></div>
+    </section>
+
+    <!-- Sección de Elicis -->
+    <section id="elicisSection" class="section elicis-section">
+      <h2>Elicis</h2>
+      <div id="elicisContainer" class="elicis-container">
+        <!-- Se mostrarán los elícis de curación y fortalecimiento -->
+      </div>
+    </section>
+
+    <!-- Sección del Gestor de Tareas (tareas creadas por el usuario) -->
+    <section id="tasksSection" class="section tasks-section">
+      <h2>Gestor de Tareas</h2>
+      <div class="task-input-container">
+        <input type="text" id="taskInput" placeholder="Nombre de la tarea" class="neon-input">
+        <input type="date" id="taskDate" class="neon-input">
+        <input type="time" id="taskTime" class="neon-input">
+        <input type="number" id="taskTimer" class="neon-input" placeholder="Temporizador (minutos)">
+        <select id="taskDifficulty" class="neon-select">
+          <option value="easy">Fácil</option>
+          <option value="medium">Medio</option>
+          <option value="hard">Difícil</option>
+        </select>
+        <button id="addTaskBtn" class="neon-button">➕ Añadir</button>
+      </div>
+      <ul id="taskList" class="task-list">
+        <!-- Las tareas creadas por el usuario se agregarán aquí -->
+      </ul>
+    </section>
+
+    <!-- Sección de Tareas de IA / Chatbot -->
+    <section id="iaTasksSection" class="section tasks-section">
+      <h2>Tareas de IA / Chatbot</h2>
+      <ul id="iaTaskList" class="task-list">
+        <!-- Las tareas generadas por la IA se agregarán aquí -->
+      </ul>
+    </section>
+
+    <!-- Sección del Chatbot -->
+    <section id="chatSection" class="section chat-section">
+      <h2>Chatbot</h2>
+      <div class="chat-container">
+        <div id="chatBox" class="chat-box">
+          <!-- Los mensajes del chat aparecerán aquí -->
+        </div>
+        <div class="chat-controls">
+          <input type="text" id="iaInput" placeholder="Escribe tu mensaje..." class="neon-input">
+          <!-- Esta línea llama a la función global enviarConsultaIA() -->
+          <button onclick="enviarConsultaIA()" class="neon-button">📤 Enviar</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal de Edición de Tarea (solo para tareas creadas por el usuario) -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="toggleModal('editModal')">&times;</span>
+      <h3>Editar Tarea</h3>
+      <input type="text" id="editTaskName" placeholder="Nombre de la tarea" class="neon-input">
+      <input type="date" id="editTaskDate" class="neon-input">
+      <input type="time" id="editTaskTime" class="neon-input">
+      <input type="number" id="editTaskTimer" class="neon-input" placeholder="Temporizador (minutos)">
+      <select id="editTaskDifficulty" class="neon-select">
+        <option value="easy">Fácil</option>
+        <option value="medium">Medio</option>
+        <option value="hard">Difícil</option>
+      </select>
+      <button onclick="guardarCambiosTarea()" class="neon-button">💾 Guardar</button>
+    </div>
+  </div>
+</body>
+</html>
